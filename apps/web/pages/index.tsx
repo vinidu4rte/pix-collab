@@ -1,8 +1,13 @@
-export default function Web() {
+import Layout from "../ui/Layout";
+import PageTitle from "../ui/text/PageTitle";
+
+export default function Home() {
   return (
-    <div>
-      <h1>Web</h1>
-      <button>Boop</button>
-    </div>
+    <Layout>
+      <PageTitle fontSize={"24px"}>
+        Dividir a conta entre <br />
+        amigos nunca foi tão fácil!
+      </PageTitle>
+    </Layout>
   );
 }

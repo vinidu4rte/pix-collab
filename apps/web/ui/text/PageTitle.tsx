@@ -1,7 +1,7 @@
 import { Heading } from "@chakra-ui/react";
 
 interface Props {
-  children: any;
+  children: React.ReactNode;
   fontSize: string | string[];
 }
 
