@@ -1,5 +1,5 @@
 import { Container } from "@chakra-ui/react";
-import WooviLogo from "../ui/svg/WooviLogo";
+import WooviLogo from "./svg/WooviLogo";
 
 interface Props {
   children: React.ReactNode;

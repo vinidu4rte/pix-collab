@@ -1,14 +1,14 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { VStack } from "@chakra-ui/react";
 
-import Layout from "../ui/Layout";
-import PageTitle from "../ui/text/PageTitle";
-import TextInput from "../ui/form/TextInput";
-import SubmitButton from "../ui/form/SubmitButton";
-import SelectInput from "../ui/form/SelectInput";
+import Layout from "../ui/generic/Layout";
+import PageTitle from "../ui/generic/text/PageTitle";
+import TextInput from "../ui/generic/form/TextInput";
+import SubmitButton from "../ui/generic/form/SubmitButton";
+import SelectInput from "../ui/generic/form/SelectInput";
 import { formatCurrency } from "../utils/formatCurrency";
 import { useState } from "react";
-import Loading from "../ui/form/Loading";
+import Loading from "../ui/generic/form/Loading";
 
 type FormData = {
   totalValue: string;
