@@ -14,6 +14,7 @@ export default function Layout({ children }: Props) {
       borderRadius={8}
       p={8}
       centerContent
+      minHeight={"80vh"}
     >
       <WooviLogo />
       {children}
