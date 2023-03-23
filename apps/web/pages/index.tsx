@@ -7,6 +7,8 @@ import TextInput from "../ui/form/TextInput";
 import SubmitButton from "../ui/form/SubmitButton";
 import SelectInput from "../ui/form/SelectInput";
 import { formatCurrency } from "../utils/formatCurrency";
+import { useState } from "react";
+import Loading from "../ui/form/Loading";
 
 type FormData = {
   totalValue: string;
@@ -14,6 +16,8 @@ type FormData = {
 };
 
 export default function Home() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     register,
     formState: { errors },
@@ -40,7 +44,12 @@ export default function Home() {
 
     const personsQuantityNumber = Number(personsQuantity);
     console.log(totalValueNumber, personsQuantityNumber);
+    setIsLoading(true);
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <Layout>
