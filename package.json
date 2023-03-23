@@ -14,12 +14,12 @@
   },
   "devDependencies": {
     "eslint-config-custom": "*",
+    "git-commit-msg-linter": "^4.9.2",
     "prettier": "latest",
     "turbo": "latest"
   },
   "engines": {
     "node": ">=14.0.0"
   },
-  "dependencies": {},
   "packageManager": "npm@9.5.0"
 }
