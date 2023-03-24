@@ -1,5 +1,5 @@
 import { Container } from "@chakra-ui/react";
-import WooviLogo from "../ui/svg/WooviLogo";
+import WooviLogo from "./svg/WooviLogo";
 
 interface Props {
   children: React.ReactNode;
@@ -8,7 +8,7 @@ interface Props {
 export default function Layout({ children }: Props) {
   return (
     <Container
-      mt={8}
+      my={8}
       borderColor="blackAlpha.300"
       borderWidth={1}
       borderRadius={8}
