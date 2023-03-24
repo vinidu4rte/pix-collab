@@ -70,6 +70,8 @@ export default function QrCodeCharge({
         <TextWithLabel
           label="Identificador"
           content={id}
+          labelFontSize="20px"
+          contentFontSize="16px"
           additionalStyles={{ paddingTop: 20 }}
         />
       </VStack>

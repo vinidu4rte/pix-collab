@@ -3,20 +3,24 @@ import { Box, Text } from "@chakra-ui/react";
 interface Props {
   label: string;
   content: string | number;
+  labelFontSize: string;
+  contentFontSize: string;
   additionalStyles?: any;
 }
 
 export default function TextWithLabel({
   label,
   content,
+  labelFontSize,
+  contentFontSize,
   additionalStyles,
 }: Props) {
   return (
-    <Box m="0 !important" textAlign="center" style={{ ...additionalStyles }}>
-      <Text fontWeight="bold" fontSize="20px">
+    <Box textAlign="center" style={{ ...additionalStyles }}>
+      <Text fontWeight="bold" fontSize={labelFontSize}>
         {label}
       </Text>
-      <Text fontSize="16px">{content}</Text>
+      <Text fontSize={contentFontSize}>{content}</Text>
     </Box>
   );
 }
