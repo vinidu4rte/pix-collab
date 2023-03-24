@@ -8,7 +8,7 @@ interface Props {
 export default function Layout({ children }: Props) {
   return (
     <Container
-      mt={8}
+      my={8}
       borderColor="blackAlpha.300"
       borderWidth={1}
       borderRadius={8}
