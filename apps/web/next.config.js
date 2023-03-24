@@ -1,4 +1,6 @@
 module.exports = {
   reactStrictMode: true,
-  transpilePackages: ["ui"],
+  images: {
+    domains: ["api.openpix.com.br"],
+  },
 };
