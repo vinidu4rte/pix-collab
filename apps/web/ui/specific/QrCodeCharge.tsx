@@ -2,6 +2,7 @@ import { Box, Center, VStack, Text, Divider } from "@chakra-ui/react";
 import Image from "next/image";
 import Success from "../generic/svg/Success";
 import PageTitle from "../generic/text/PageTitle";
+import TextWithLabel from "../generic/text/TextWithLabel";
 
 interface Props {
   id: string;
@@ -66,12 +67,11 @@ export default function QrCodeCharge({
             <Success />
           </Center>
         )}
-        <Box pt={"4"} m="0 !important" textAlign="center">
-          <Text fontWeight="bold" fontSize="20px">
-            Identificador
-          </Text>
-          <Text fontSize="16px">{id}</Text>
-        </Box>
+        <TextWithLabel
+          label="Identificador"
+          content={id}
+          additionalStyles={{ paddingTop: 20 }}
+        />
       </VStack>
       {hasDivider && (
         <Box pt={8}>
