@@ -1,0 +1,25 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/mongoose": "^5.11.97",
+    "@types/node": "^17.0.12",
+    "eslint": "7.32.0",
+    "eslint-config-custom": "*",
+    "nodemon": "^2.0.22",
+    "ts-node": "^10.9.1",
+    "tsconfig": "*",
+    "typescript": "^4.5.3"
+  },
+  "dependencies": {
+    "mongoose": "^7.0.3"
+  }
+}
