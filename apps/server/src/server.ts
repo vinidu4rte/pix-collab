@@ -1,7 +1,7 @@
 import http from "http";
 import { koaMiddleware } from "@as-integrations/koa";
 import app from "./app";
-import { createSchema } from "./schema";
+import { createSchema } from "./config/schema";
 import { connectDatabase } from "./config/database";
 import { createGqlServer } from "./config/gqlServer";
 
