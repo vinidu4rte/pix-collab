@@ -12,7 +12,7 @@ export class Woovi {
   private client: AxiosInstance;
 
   constructor() {
-    const baseURL = "https://api.openpix.com.br/api/v1";
+    const baseURL = "https://api.openpix.com.br";
 
     this.client = axios.create({ baseURL });
 
@@ -24,8 +24,11 @@ export class Woovi {
 
   charge = {
     create: async (data: WooviCreateChargeDto) => {
-      const response = await this.client.post("/charge", data);
+      const response = await this.client.post("/api/v1/charge", data);
       return response.data;
+    },
+    pay: async (transactionId: string) => {
+      await this.client.get(`/openpix/testing?transactionID=${transactionId}`);
     },
   };
 }
