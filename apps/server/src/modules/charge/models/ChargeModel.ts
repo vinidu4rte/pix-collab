@@ -12,7 +12,7 @@ export interface ChargeDocument extends Charge, Document {}
 
 const chargeSchema = new Schema<ChargeDocument>(
   {
-    status: { type: String, required: true },
+    status: { type: String, default: "pending" },
     value: { type: Number, required: true },
     collaboratorsQuantity: { type: Number, required: true },
   },
