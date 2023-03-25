@@ -1,9 +1,18 @@
-import { Resolver, Query, Mutation, Arg } from "type-graphql";
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Arg,
+  FieldResolver,
+  Root,
+} from "type-graphql";
 import { Charge } from "./dtos/entities/Charge";
+import { PartialCharge } from "./dtos/entities/PartialCharge";
 import { CreateChargeInput } from "./dtos/inputs/CreateChargeInput";
 import ChargeModel from "./models/ChargeModel";
+import { PartialChargeModel } from "./models/PartialChargeModel";
 
-@Resolver()
+@Resolver(() => Charge)
 export class ChargeResolver {
   @Query(() => String)
   hello() {
@@ -20,5 +29,14 @@ export class ChargeResolver {
     });
 
     return charge;
+  }
+
+  @FieldResolver(() => [PartialCharge]!)
+  async partialCharge(@Root() charge: Charge) {
+    const { id } = charge;
+
+    const partialCharges = PartialChargeModel.find({ chargeId: id });
+
+    return partialCharges;
   }
 }
