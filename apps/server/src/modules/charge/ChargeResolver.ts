@@ -76,53 +76,15 @@ export class ChargeResolver {
     }
   }
 
-  @Mutation(() => PartialCharge)
+  @Mutation(() => String)
   async fakeChargePayment(@Arg("data") data: FakeChargePaymentInput) {
-    const session = await db.getInstance().startSession();
-
     try {
-      session.startTransaction();
       const { transactionId } = data;
-
-      const partialCharge = await PartialChargeModel.findOne({
-        transactionId,
-      });
-
-      if (!partialCharge) {
-        throw new Error("Partial charge not found");
-      }
-
-      const { id, status, chargeId } = partialCharge;
-      if (status === "paid") {
-        throw new Error("Partial charge already paid");
-      }
-
       const woovi = new Woovi();
       await woovi.charge.pay(transactionId);
 
-      const updatedPartialCharge = await PartialChargeModel.findByIdAndUpdate(
-        id,
-        {
-          status: "paid",
-        },
-        { new: true }
-      );
-
-      const partialCharges = await PartialChargeModel.find({ chargeId });
-      const hasRemaningCharges = partialCharges.find(
-        (partialCharge) => partialCharge.status === "pendind"
-      );
-
-      if (!hasRemaningCharges) {
-        await ChargeModel.findByIdAndUpdate(chargeId, {
-          status: "paid",
-        });
-      }
-
-      session.commitTransaction();
-      return updatedPartialCharge;
+      return "OK";
     } catch (error) {
-      session.abortTransaction();
       throw error;
     }
   }
