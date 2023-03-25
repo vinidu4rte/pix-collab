@@ -18,7 +18,7 @@ const partialChargeSchema = new Schema<PartialCharge>(
     chargeId: { type: Schema.Types.ObjectId, ref: "Charge", required: true },
     correlationId: { type: String, required: true },
     transactionId: { type: String, required: true },
-    status: { type: String, required: true },
+    status: { type: String, default: "pending" },
     value: { type: Number, required: true },
     qrCode: { type: String, required: true },
   },
