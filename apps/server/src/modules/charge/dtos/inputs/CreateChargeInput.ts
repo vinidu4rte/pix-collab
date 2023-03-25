@@ -12,6 +12,6 @@ export class CreateChargeInput {
   @Field()
   @IsInt()
   @Min(2)
-  @Max(8)
+  @Max(4)
   collaboratorsQuantity: number;
 }
