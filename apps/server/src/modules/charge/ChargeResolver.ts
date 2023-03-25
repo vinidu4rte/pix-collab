@@ -14,6 +14,7 @@ import { CreateChargeInput } from "./dtos/inputs/CreateChargeInput";
 import ChargeModel from "./models/ChargeModel";
 import { PartialChargeModel } from "./models/PartialChargeModel";
 import { randomUUID } from "crypto";
+import { FakeChargePaymentInput } from "./dtos/inputs/FakeChargePaymentInput";
 
 @Resolver(() => Charge)
 export class ChargeResolver {
@@ -63,6 +64,57 @@ export class ChargeResolver {
 
       session.commitTransaction();
       return charge;
+    } catch (error) {
+      session.abortTransaction();
+      throw error;
+    }
+  }
+
+  @Mutation(() => PartialCharge)
+  async fakeChargePayment(@Arg("data") data: FakeChargePaymentInput) {
+    const session = await db.getInstance().startSession();
+
+    try {
+      session.startTransaction();
+      const { transactionId } = data;
+
+      const partialCharge = await PartialChargeModel.findOne({
+        transactionId,
+      });
+
+      if (!partialCharge) {
+        throw new Error("Partial charge not found");
+      }
+
+      const { id, status, chargeId } = partialCharge;
+      if (status === "paid") {
+        throw new Error("Partial charge already paid");
+      }
+
+      const woovi = new Woovi();
+      await woovi.charge.pay(transactionId);
+
+      const updatedPartialCharge = await PartialChargeModel.findByIdAndUpdate(
+        id,
+        {
+          status: "paid",
+        },
+        { new: true }
+      );
+
+      const partialCharges = await PartialChargeModel.find({ chargeId });
+      const hasRemaningCharges = partialCharges.find(
+        (partialCharge) => partialCharge.status === "pendind"
+      );
+
+      if (!hasRemaningCharges) {
+        await ChargeModel.findByIdAndUpdate(chargeId, {
+          status: "paid",
+        });
+      }
+
+      session.commitTransaction();
+      return updatedPartialCharge;
     } catch (error) {
       session.abortTransaction();
       throw error;
