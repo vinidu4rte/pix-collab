@@ -1,7 +1,8 @@
 import { buildSchema } from "type-graphql";
-import { HelloResolver } from "../modules/HelloResolver";
+import { ChargeResolver } from "../modules/charge/ChargeResolver";
+import path from "path";
 
 export const createSchema = async () =>
   buildSchema({
-    resolvers: [HelloResolver],
+    resolvers: [ChargeResolver],
   });
