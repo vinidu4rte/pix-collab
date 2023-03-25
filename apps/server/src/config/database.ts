@@ -1,9 +1,9 @@
-import { createConnection, ClientSession, Connection } from "mongoose";
+import { connect, ClientSession, Mongoose } from "mongoose";
 import { config } from "./environment";
 
 export class db {
   private static _instance: db;
-  private _connection: Connection;
+  private _connection: Mongoose;
 
   private constructor() {}
 
@@ -14,8 +14,8 @@ export class db {
     return db._instance;
   }
 
-  public connect(): void {
-    this._connection = createConnection(config.MONGO_URI!);
+  public async connect(): Promise<void> {
+    this._connection = await connect(config.MONGO_URI!);
   }
 
   public async startSession(): Promise<ClientSession> {
