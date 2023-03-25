@@ -2,14 +2,14 @@ import http from "http";
 import { koaMiddleware } from "@as-integrations/koa";
 import app from "./app";
 import { createSchema } from "./config/schema";
-import { connectDatabase } from "./config/database";
+import { db } from "./config/database";
 import { createGqlServer } from "./config/gqlServer";
 
 async function bootstrap(): Promise<void> {
   try {
-    await connectDatabase();
+    db.getInstance().connect();
   } catch (err) {
-    console.error("Unable to connect to database!", err);
+    console.error("Unable to connect to database.", err);
     process.exit(1);
   }
 
