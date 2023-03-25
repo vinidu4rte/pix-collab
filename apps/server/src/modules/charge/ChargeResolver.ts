@@ -18,9 +18,15 @@ import { FakeChargePaymentInput } from "./dtos/inputs/FakeChargePaymentInput";
 
 @Resolver(() => Charge)
 export class ChargeResolver {
-  @Query(() => String)
-  hello() {
-    return "Hello World!";
+  @Query(() => Charge)
+  async charge(@Arg("id") id: string) {
+    const charge = await ChargeModel.findById(id);
+
+    if (!charge) {
+      throw new Error("Charge not found");
+    }
+
+    return charge;
   }
 
   @Mutation(() => Charge)
