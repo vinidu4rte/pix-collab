@@ -8,5 +8,5 @@ export const connectDatabase = async (): Promise<void> => {
     .on("error", (err) => console.log(err))
     .on("close", () => console.log("Database connection was closed!"));
 
-  await mongoose.connect(config.MONGO_URI);
+  await mongoose.connect(config.MONGO_URI!);
 };
