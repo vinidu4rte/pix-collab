@@ -31,3 +31,9 @@ yarn-error.log*
 
 # turbo
 .turbo
+
+# docker
+data/
+
+# secrets
+.env
