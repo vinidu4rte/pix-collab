@@ -1,6 +1,7 @@
 {
   "extends": "tsconfig/base.json",
   "compilerOptions": {
+    "experimentalDecorators": true,
     "outDir": "./dist",
     "module": "CommonJS",
     "target": "ES2019",
