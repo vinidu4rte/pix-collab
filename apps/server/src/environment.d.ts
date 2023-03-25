@@ -7,6 +7,7 @@ declare global {
       PORT?: string;
       MONGO_URI: string;
       WOOVI_API_KEY: string;
+      WOOVI_WEBHOOK_SECRET: string;
     }
   }
 }
