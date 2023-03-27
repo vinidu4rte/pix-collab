@@ -11,7 +11,7 @@ export const createGqlServer = async (
 ): Promise<ApolloServer> => {
   const wsServer = new WebSocketServer({
     server: httpServer,
-    path: "/subscription",
+    path: "/",
   });
 
   const serverCleanup = useServer({ schema }, wsServer);
