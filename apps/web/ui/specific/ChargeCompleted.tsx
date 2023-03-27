@@ -1,8 +1,8 @@
 import { Center, VStack } from "@chakra-ui/react";
-import Layout from "../ui/generic/Layout";
-import Success from "../ui/generic/svg/Success";
-import PageTitle from "../ui/generic/text/PageTitle";
-import TextWithLabel from "../ui/generic/text/TextWithLabel";
+import Layout from "../generic/Layout";
+import Success from "../generic/svg/Success";
+import PageTitle from "../generic/text/PageTitle";
+import TextWithLabel from "../generic/text/TextWithLabel";
 
 interface Props {
   totalValue: number;
@@ -10,21 +10,11 @@ interface Props {
   paymentId: string;
 }
 
-export default function Feedback({
+export default function ChargeCompleted({
   totalValue,
   receiverName,
   paymentId,
 }: Props) {
-  const mockedData: Props = {
-    totalValue: 100,
-    receiverName: "VD Consultoria",
-    paymentId: "fc571b347d814503aedc9300aca3a04z",
-  };
-
-  totalValue = mockedData.totalValue;
-  receiverName = mockedData.receiverName;
-  paymentId = mockedData.paymentId;
-
   const formattedTotalValue = totalValue.toLocaleString("pt-BR", {
     currency: "BRL",
     style: "currency",
