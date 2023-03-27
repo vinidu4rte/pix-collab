@@ -25,6 +25,7 @@ const GET_CHARGE = gql`
 interface PartialCharge {
   id: string;
   status: "pending" | "paid";
+  transactionId: string;
   qrCode: string;
   value: number;
 }
@@ -76,7 +77,7 @@ export default function Charge() {
       {partialCharge.map((charge: PartialCharge, index: number) => (
         <QrCodeCharge
           key={charge.id}
-          id={charge.id}
+          id={charge.transactionId}
           status={charge.status}
           value={charge.value / 100}
           paymentNumber={index}
