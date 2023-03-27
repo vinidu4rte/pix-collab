@@ -1,8 +1,9 @@
 import { Context } from "koa";
 import { db } from "../../config/database";
 import { config } from "../../config/environment";
-import ChargeModel from "../charge/models/ChargeModel";
+import ChargeModel, { ChargeDocument } from "../charge/models/ChargeModel";
 import { PartialChargeModel } from "../charge/models/PartialChargeModel";
+import { pubsub } from "../../config/schema";
 
 interface WooviWebhook {
   event: string;
@@ -12,6 +13,7 @@ export const ChargeController = async (ctx: Context) => {
   const session = await db.getInstance().startSession();
 
   try {
+    session.startTransaction();
     const authToken = ctx.request.headers["authorization"];
     const secretToken = config.WOOVI_WEBHOOK_SECRET;
 
@@ -46,8 +48,6 @@ export const ChargeController = async (ctx: Context) => {
       throw new Error("Partial charge already paid");
     }
 
-    session.startTransaction();
-
     const updatedPartialCharge = await PartialChargeModel.findByIdAndUpdate(
       id,
       {
@@ -61,16 +61,26 @@ export const ChargeController = async (ctx: Context) => {
       (partialCharge) => partialCharge.status === "pending"
     );
 
+    let charge: ChargeDocument | null;
+
     if (!hasRemaningCharges) {
-      await ChargeModel.findByIdAndUpdate(chargeId, {
-        status: "paid",
-      });
+      charge = await ChargeModel.findByIdAndUpdate(
+        chargeId,
+        {
+          status: "paid",
+        },
+        { new: true }
+      ).populate("partialCharges");
+    } else {
+      charge = await ChargeModel.findById(chargeId).populate("partialCharges");
     }
+
+    await pubsub.publish("PARTIAL_CHARGE_PAYMENT", charge);
 
     session.commitTransaction();
     return updatedPartialCharge;
   } catch (error) {
     session.abortTransaction();
-    throw error;
+    console.log("Webhook error:", error);
   }
 };
