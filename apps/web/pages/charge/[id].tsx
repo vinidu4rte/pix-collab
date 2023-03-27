@@ -52,7 +52,7 @@ export default function Charge() {
   );
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div></div>;
   }
 
   if (error || !data) {
