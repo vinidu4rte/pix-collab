@@ -59,7 +59,15 @@ export default function QrCodeCharge({
             width={300}
             height={300}
           >
-            <Image src={qrCode} alt="Pix QR Code" fill />
+            <Image
+              src={qrCode}
+              alt="Pix QR Code"
+              fill
+              sizes="(max-width: 768px) 100vw,
+              (max-width: 1200px) 50vw,
+              33vw"
+              priority={true}
+            />
           </Box>
         )}
         {status === "paid" && (
