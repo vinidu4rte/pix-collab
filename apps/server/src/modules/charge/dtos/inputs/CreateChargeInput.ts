@@ -5,8 +5,8 @@ import { IsInt, Min, Max } from "class-validator";
 export class CreateChargeInput {
   @Field()
   @IsInt()
-  @Min(0.01)
-  @Max(5000)
+  @Min(1)
+  @Max(500000)
   value: number;
 
   @Field()
