@@ -2,6 +2,8 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { AppProps } from "next/app";
 import { customizedTheme } from "../theme";
 import Head from "next/head";
+import { ApolloProvider } from "@apollo/client";
+import { client } from "../config/graphql";
 
 function App({ Component, pageProps }: AppProps) {
   return (
@@ -9,7 +11,9 @@ function App({ Component, pageProps }: AppProps) {
       <Head>
         <title>PixCollab - Woovi</title>
       </Head>
-      <Component {...pageProps} />
+      <ApolloProvider client={client}>
+        <Component {...pageProps} />
+      </ApolloProvider>
     </ChakraProvider>
   );
 }
