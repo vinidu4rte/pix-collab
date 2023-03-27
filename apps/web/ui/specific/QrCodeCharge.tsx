@@ -7,7 +7,7 @@ import TextWithLabel from "../generic/text/TextWithLabel";
 interface Props {
   id: string;
   value: number;
-  status: "waiting" | "paid";
+  status: "pending" | "paid";
   paymentNumber: number;
   qrCode: string;
   hasDivider?: boolean;
@@ -38,7 +38,7 @@ export default function QrCodeCharge({
   ];
 
   const textTitle =
-    status === "waiting"
+    status === "pending"
       ? `Pague ${formattedCurrency} para completar a ${paymentTextIndexes[paymentNumber]} parte do pagamento.`
       : `${paymentTextIndexes[
           paymentNumber
@@ -50,7 +50,7 @@ export default function QrCodeCharge({
     <Box>
       <PageTitle fontSize={"24px"}>{textTitle}</PageTitle>
       <VStack>
-        {status === "waiting" && (
+        {status === "pending" && (
           <Box
             position="relative"
             borderWidth={4}
@@ -63,7 +63,7 @@ export default function QrCodeCharge({
           </Box>
         )}
         {status === "paid" && (
-          <Center py={8}>
+          <Center py={8} height={300}>
             <Success />
           </Center>
         )}
