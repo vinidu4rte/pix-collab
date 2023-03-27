@@ -5,6 +5,7 @@ import {
   Arg,
   FieldResolver,
   Root,
+  Subscription,
 } from "type-graphql";
 import { db } from "../../config/database";
 import { Woovi, WooviCreateChargeDto } from "../../lib/woovi";
@@ -15,6 +16,7 @@ import ChargeModel from "./models/ChargeModel";
 import { PartialChargeModel } from "./models/PartialChargeModel";
 import { randomUUID } from "crypto";
 import { FakeChargePaymentInput } from "./dtos/inputs/FakeChargePaymentInput";
+import { ChargeSubscriptionInput } from "./dtos/inputs/ChargeSubscriptionInput";
 
 @Resolver(() => Charge)
 export class ChargeResolver {
@@ -89,9 +91,31 @@ export class ChargeResolver {
     }
   }
 
+  @Subscription({
+    topics: "PARTIAL_CHARGE_PAYMENT",
+    filter: ({ payload, args }) => payload._id.toString() === args.chargeId,
+  })
+  newNotification(
+    @Root() notificationPayload: ChargeSubscriptionInput | any,
+    @Arg("chargeId") chargeId: string
+  ): Charge {
+    return {
+      id: notificationPayload._id.toString(),
+      collaboratorsQuantity: notificationPayload.collaboratorsQuantity,
+      status: notificationPayload.status,
+      value: notificationPayload.value,
+    };
+  }
+
   @FieldResolver(() => [PartialCharge]!)
   async partialCharge(@Root() charge: Charge | any) {
-    const chargeId = charge._doc._id;
+    let chargeId;
+
+    if (charge._doc) {
+      chargeId = charge._doc._id;
+    } else {
+      chargeId = charge.id;
+    }
     return await PartialChargeModel.find({ chargeId });
   }
 }
