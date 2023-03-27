@@ -1,12 +1,11 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import "reflect-metadata";
 import Koa from "koa";
-import Router from "@koa/router";
 import bodyParser from "koa-bodyparser";
 import cors from "@koa/cors";
+import router from "./routes";
 
 const app = new Koa();
-const router = new Router();
 
 app.use(cors());
 app.use(bodyParser());

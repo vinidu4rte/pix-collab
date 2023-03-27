@@ -2,11 +2,14 @@
   "extends": "tsconfig/base.json",
   "compilerOptions": {
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "outDir": "./dist",
     "module": "CommonJS",
-    "target": "ES2019",
+    "target": "ES2018",
+    "lib": ["es2018", "esnext.asynciterable"],
     "esModuleInterop": true,
     "allowJs": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "strictPropertyInitialization": false
   }
 }
