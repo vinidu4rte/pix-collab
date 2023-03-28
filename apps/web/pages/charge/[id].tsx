@@ -1,4 +1,4 @@
-import { gql, useQuery, useSubscription } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import Layout from "../../ui/generic/Layout";
 import ChargeCompleted from "../../ui/specific/ChargeCompleted";
@@ -58,21 +58,18 @@ interface ChargeData {
   partialCharge: PartialCharge[];
 }
 
-export default function Charge() {
-  const router = useRouter();
-  const chargeId = router.query.id;
-
+export default function Charge({ chargeId }: any) {
   const { data, loading, error, subscribeToMore } = useQuery<{
     newNotification: ChargeData;
     charge: ChargeData;
   }>(GET_CHARGE, {
-    variables: { chargeId },
+    variables: { chargeId: chargeId },
   });
 
   subscribeToMore({
     document: CHARGE_SUBSCRIPTION,
-    variables: { chargeId },
-    updateQuery: (prev, { subscriptionData }) => {
+    variables: { chargeId: chargeId },
+    updateQuery: (prev: any, { subscriptionData }: any) => {
       if (!subscriptionData.data) return prev;
       const newCharge = subscriptionData.data.newNotification;
       return Object.assign({}, prev, {
@@ -118,3 +115,9 @@ export default function Charge() {
     </Layout>
   );
 }
+
+Charge.getInitialProps = async (ctx: any) => {
+  const chargeId = ctx.query.id;
+
+  return { chargeId };
+};
