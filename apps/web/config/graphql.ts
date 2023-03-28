@@ -13,7 +13,7 @@ const httpLink = new HttpLink({
 const wsLink = isBrowser
   ? new GraphQLWsLink(
       createClient({
-        url: "ws://woovi-challenge-server.onrender.com",
+        url: "wss://woovi-challenge-server.onrender.com",
       })
     )
   : null;
