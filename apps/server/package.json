@@ -33,6 +33,7 @@
     "@koa/router": "^12.0.0",
     "@types/koa__router": "^12.0.0",
     "class-validator": "^0.14.0",
+    "decimal.js": "^10.4.3",
     "graphql": "^16.6.0",
     "graphql-subscriptions": "^2.0.0",
     "graphql-ws": "^5.12.0",
