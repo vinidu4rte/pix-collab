@@ -3,5 +3,4 @@ module.exports = {
   images: {
     domains: ["api.openpix.com.br"],
   },
-  distDir: "dist",
 };
