@@ -75,7 +75,7 @@ export const ChargeController = async (ctx: Context) => {
       charge = await ChargeModel.findById(chargeId).populate("partialCharges");
     }
 
-    await pubsub.publish("PARTIAL_CHARGE_PAYMENT", charge);
+    await pubsub.publish("PARTIAL_CHARGE_PAYMENT", { id: chargeId });
 
     session.commitTransaction();
     return updatedPartialCharge;

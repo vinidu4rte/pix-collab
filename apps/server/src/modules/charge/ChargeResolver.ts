@@ -16,7 +16,6 @@ import ChargeModel from "./models/ChargeModel";
 import { PartialChargeModel } from "./models/PartialChargeModel";
 import { randomUUID } from "crypto";
 import { FakeChargePaymentInput } from "./dtos/inputs/FakeChargePaymentInput";
-import { ChargeSubscriptionInput } from "./dtos/inputs/ChargeSubscriptionInput";
 
 @Resolver(() => Charge)
 export class ChargeResolver {
@@ -91,20 +90,20 @@ export class ChargeResolver {
     }
   }
 
-  @Subscription({
+  @Subscription(() => Charge, {
     topics: "PARTIAL_CHARGE_PAYMENT",
-    filter: ({ payload, args }) => payload._id.toString() === args.chargeId,
   })
-  newNotification(
-    @Root() notificationPayload: ChargeSubscriptionInput | any,
+  async newNotification(
+    @Root() notificationPayload: { id: string },
     @Arg("chargeId") chargeId: string
-  ): Charge {
-    return {
-      id: notificationPayload._id.toString(),
-      collaboratorsQuantity: notificationPayload.collaboratorsQuantity,
-      status: notificationPayload.status,
-      value: notificationPayload.value,
-    };
+  ) {
+    const charge = await ChargeModel.findById(chargeId);
+
+    if (!charge) {
+      throw new Error("Charge not found");
+    }
+
+    return charge;
   }
 
   @FieldResolver(() => [PartialCharge]!)
