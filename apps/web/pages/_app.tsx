@@ -7,14 +7,14 @@ import { client } from "../config/graphql";
 
 function App({ Component, pageProps }: AppProps) {
   return (
-    <ChakraProvider theme={customizedTheme}>
-      <Head>
-        <title>PixCollab - Woovi</title>
-      </Head>
-      <ApolloProvider client={client}>
+    <ApolloProvider client={client}>
+      <ChakraProvider theme={customizedTheme}>
+        <Head>
+          <title>PixCollab - Woovi</title>
+        </Head>
         <Component {...pageProps} />
-      </ApolloProvider>
-    </ChakraProvider>
+      </ChakraProvider>
+    </ApolloProvider>
   );
 }
 
