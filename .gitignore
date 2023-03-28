@@ -37,3 +37,6 @@ data/
 
 # secrets
 .env
+
+# build
+dist/
