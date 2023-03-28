@@ -96,7 +96,7 @@ export default function Charge() {
     return (
       <ChargeCompleted
         paymentId={id}
-        receiverName="VD Consultoria"
+        receiverName="Vinicius Duarte"
         totalValue={value / 100}
       />
     );
