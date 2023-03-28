@@ -7,16 +7,30 @@ import TextInput from "../ui/generic/form/TextInput";
 import SubmitButton from "../ui/generic/form/SubmitButton";
 import SelectInput from "../ui/generic/form/SelectInput";
 import { formatCurrency } from "../utils/formatCurrency";
-import { useState } from "react";
 import Loading from "../ui/generic/form/Loading";
+import { gql, useMutation } from "@apollo/client";
+import { useRouter } from "next/router";
 
 type FormData = {
   totalValue: string;
   personsQuantity: string;
 };
 
+const CREATE_CHARGE = gql`
+  mutation CreateCharge($data: CreateChargeInput!) {
+    createCharge(data: $data) {
+      id
+    }
+  }
+`;
+
 export default function Home() {
-  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const [createCharge, { data, loading, error }] = useMutation(CREATE_CHARGE);
+
+  if (data) {
+    router.push(`/charge/${data.createCharge.id}`);
+  }
 
   const {
     register,
@@ -33,7 +47,8 @@ export default function Home() {
   const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
     const { totalValue, personsQuantity } = data;
 
-    const totalValueNumber = Number(totalValue.replace(/[^0-9]/g, "")) / 100;
+    const totalValueNumber = Number(totalValue.replace(/[^0-9]/g, ""));
+
     if (!totalValueNumber) {
       setError("totalValue", {
         type: "manual",
@@ -43,11 +58,18 @@ export default function Home() {
     }
 
     const personsQuantityNumber = Number(personsQuantity);
-    console.log(totalValueNumber, personsQuantityNumber);
-    setIsLoading(true);
+
+    await createCharge({
+      variables: {
+        data: {
+          value: totalValueNumber,
+          collaboratorsQuantity: personsQuantityNumber,
+        },
+      },
+    });
   };
 
-  if (isLoading) {
+  if (loading || data) {
     return <Loading />;
   }
 
@@ -89,10 +111,6 @@ export default function Home() {
               { value: "2", label: "2" },
               { value: "3", label: "3" },
               { value: "4", label: "4" },
-              { value: "5", label: "5" },
-              { value: "6", label: "6" },
-              { value: "7", label: "7" },
-              { value: "8", label: "8" },
             ]}
             hookForm={register("personsQuantity", {
               required: "É necessário inserir a quantidade de pessoas.",
@@ -101,6 +119,10 @@ export default function Home() {
           <SubmitButton
             text={"Gerar cobranças"}
             isDisabled={!!errors.personsQuantity || !!errors.totalValue}
+            fontSize={"18px"}
+            height={"70px"}
+            width={"100%"}
+            borderRadius={8}
           />
         </VStack>
       </form>

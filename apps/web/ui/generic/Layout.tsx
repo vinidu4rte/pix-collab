@@ -10,7 +10,7 @@ export default function Layout({ children }: Props) {
     <Container
       my={8}
       borderColor="blackAlpha.300"
-      borderWidth={1}
+      borderWidth={0}
       borderRadius={8}
       p={8}
       centerContent
