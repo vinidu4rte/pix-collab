@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useSubscription } from "@apollo/client";
 import { useRouter } from "next/router";
 import Layout from "../../ui/generic/Layout";
 import ChargeCompleted from "../../ui/specific/ChargeCompleted";
@@ -9,14 +9,34 @@ const GET_CHARGE = gql`
     charge(id: $chargeId) {
       id
       status
-      value
       collaboratorsQuantity
+      value
       partialCharge {
         id
+        correlationId
         transactionId
-        qrCode
         status
         value
+        qrCode
+      }
+    }
+  }
+`;
+
+const CHARGE_SUBSCRIPTION = gql`
+  subscription NewNotification($chargeId: String!) {
+    newNotification(chargeId: $chargeId) {
+      id
+      status
+      collaboratorsQuantity
+      value
+      partialCharge {
+        id
+        correlationId
+        transactionId
+        status
+        value
+        qrCode
       }
     }
   }
@@ -42,14 +62,24 @@ export default function Charge() {
   const router = useRouter();
   const chargeId = router.query.id;
 
-  const { data, loading, error } = useQuery<{ charge: ChargeData }>(
-    GET_CHARGE,
-    {
-      variables: {
-        chargeId: chargeId,
-      },
-    }
-  );
+  const { data, loading, error, subscribeToMore } = useQuery<{
+    newNotification: ChargeData;
+    charge: ChargeData;
+  }>(GET_CHARGE, {
+    variables: { chargeId },
+  });
+
+  subscribeToMore({
+    document: CHARGE_SUBSCRIPTION,
+    variables: { chargeId },
+    updateQuery: (prev, { subscriptionData }) => {
+      if (!subscriptionData.data) return prev;
+      const newCharge = subscriptionData.data.newNotification;
+      return Object.assign({}, prev, {
+        charge: newCharge,
+      });
+    },
+  });
 
   if (loading) {
     return <div></div>;
