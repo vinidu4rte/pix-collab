@@ -3,7 +3,7 @@ import { VStack } from "@chakra-ui/react";
 
 import Layout from "../ui/generic/Layout";
 import PageTitle from "../ui/generic/text/PageTitle";
-import TextInput from "../ui/specific/CurrencyInput";
+import CurrencyInput from "../ui/specific/CurrencyInput";
 import SubmitButton from "../ui/generic/form/SubmitButton";
 import SelectInput from "../ui/generic/form/SelectInput";
 import Loading from "../ui/generic/form/Loading";
@@ -85,7 +85,7 @@ export default function Home() {
         }}
       >
         <VStack spacing={6}>
-          <TextInput
+          <CurrencyInput
             id={"totalValue"}
             required={true}
             label={"Valor total (R$):"}
