@@ -16,6 +16,7 @@ import ChargeModel from "./models/ChargeModel";
 import { PartialChargeModel } from "./models/PartialChargeModel";
 import { randomUUID } from "crypto";
 import { FakeChargePaymentInput } from "./dtos/inputs/FakeChargePaymentInput";
+import { Decimal } from "decimal.js";
 
 @Resolver(() => Charge)
 export class ChargeResolver {
@@ -43,7 +44,11 @@ export class ChargeResolver {
         collaboratorsQuantity,
       });
 
-      const partialChargeValue = value / collaboratorsQuantity;
+      const decimal = new Decimal(value);
+
+      const partialChargeValue = decimal
+        .dividedBy(collaboratorsQuantity)
+        .toFixed(0);
 
       const woovi = new Woovi();
 
@@ -54,7 +59,7 @@ export class ChargeResolver {
           correlationID: correlationId,
           comment: `Cobrança ${i + 1}`,
           expiresIn: 9999999999999,
-          value: partialChargeValue,
+          value: Number(partialChargeValue),
         };
 
         const response = await woovi.charge.create(chargeDto);
@@ -73,6 +78,7 @@ export class ChargeResolver {
       return charge;
     } catch (error) {
       session.abortTransaction();
+      console.log(error);
       throw error;
     }
   }
