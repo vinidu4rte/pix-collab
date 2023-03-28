@@ -7,13 +7,13 @@ import { createClient } from "graphql-ws";
 const isBrowser = typeof window !== "undefined";
 
 const httpLink = new HttpLink({
-  uri: "http://localhost:4000",
+  uri: "https://woovi-challenge-server.onrender.com",
 });
 
 const wsLink = isBrowser
   ? new GraphQLWsLink(
       createClient({
-        url: "ws://localhost:4000",
+        url: "ws://woovi-challenge-server.onrender.com",
       })
     )
   : null;
