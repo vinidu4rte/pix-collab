@@ -1,5 +1,6 @@
 import { Box, Center, VStack, Text, Divider } from "@chakra-ui/react";
 import Image from "next/image";
+import SubmitButton from "../generic/form/SubmitButton";
 import Success from "../generic/svg/Success";
 import PageTitle from "../generic/text/PageTitle";
 import TextWithLabel from "../generic/text/TextWithLabel";
@@ -51,24 +52,35 @@ export default function QrCodeCharge({
       <PageTitle fontSize={"24px"}>{textTitle}</PageTitle>
       <VStack>
         {status === "pending" && (
-          <Box
-            position="relative"
-            borderWidth={4}
-            borderColor="brand.primary"
-            borderRadius={8}
-            width={300}
-            height={300}
-          >
-            <Image
-              src={qrCode}
-              alt="Pix QR Code"
-              fill
-              sizes="(max-width: 768px) 100vw,
+          <>
+            <Box
+              position="relative"
+              borderWidth={4}
+              borderColor="brand.primary"
+              borderRadius={8}
+              width={300}
+              height={300}
+              mb={4}
+            >
+              <Image
+                src={qrCode}
+                alt="Pix QR Code"
+                fill
+                sizes="(max-width: 768px) 100vw,
               (max-width: 1200px) 50vw,
               33vw"
-              priority={true}
+                priority={true}
+              />
+            </Box>
+            <SubmitButton
+              text="Simular pagamento"
+              fontSize="12px"
+              height={8}
+              width={150}
+              isDisabled={false}
+              borderRadius={0}
             />
-          </Box>
+          </>
         )}
         {status === "paid" && (
           <Center py={8} height={300}>
@@ -80,7 +92,7 @@ export default function QrCodeCharge({
           content={id}
           labelFontSize="20px"
           contentFontSize="16px"
-          additionalStyles={{ paddingTop: 20 }}
+          additionalStyles={{ paddingTop: 10 }}
         />
       </VStack>
       {hasDivider && (
