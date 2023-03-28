@@ -16,11 +16,13 @@
     "@hookform/resolvers": "^3.0.0",
     "framer-motion": "^10.8.5",
     "graphql": "^16.6.0",
+    "graphql-ws": "^5.12.0",
     "next": "^13.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.43.7",
-    "react-text-transition": "^3.0.2"
+    "react-text-transition": "^3.0.2",
+    "subscriptions-transport-ws": "^0.11.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
