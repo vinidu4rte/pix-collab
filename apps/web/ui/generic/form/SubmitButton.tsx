@@ -26,7 +26,7 @@ export default function SubmitButton({
       fontWeight={"800"}
       height={"70px"}
       _hover={{
-        bgColor: "brand.primary",
+        bgColor: "#02956d",
       }}
     >
       {text}
