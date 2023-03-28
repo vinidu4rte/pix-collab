@@ -85,7 +85,7 @@ export default function QrCodeCharge({
       </VStack>
       {hasDivider && (
         <Box pt={8}>
-          <Divider />
+          <Divider variant="dashed" />
         </Box>
       )}
     </Box>
