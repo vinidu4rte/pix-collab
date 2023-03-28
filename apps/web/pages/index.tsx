@@ -119,6 +119,10 @@ export default function Home() {
           <SubmitButton
             text={"Gerar cobranças"}
             isDisabled={!!errors.personsQuantity || !!errors.totalValue}
+            fontSize={"18px"}
+            height={"70px"}
+            width={"100%"}
+            borderRadius={8}
           />
         </VStack>
       </form>

@@ -5,6 +5,10 @@ interface Props {
   isDisabled: boolean;
   onClick?: () => void;
   isLoading?: boolean;
+  width: string | number;
+  height: string | number;
+  fontSize: string | number;
+  borderRadius: string | number;
 }
 
 export default function SubmitButton({
@@ -12,6 +16,10 @@ export default function SubmitButton({
   onClick,
   isDisabled,
   isLoading,
+  width,
+  height,
+  fontSize,
+  borderRadius,
 }: Props) {
   return (
     <Button
@@ -21,13 +29,14 @@ export default function SubmitButton({
       isDisabled={isDisabled}
       bgColor="brand.primary"
       color={"brand.white"}
-      width="100%"
-      fontSize={"18px"}
+      width={width}
+      fontSize={fontSize}
       fontWeight={"800"}
-      height={"70px"}
+      height={height}
       _hover={{
         bgColor: "#02956d",
       }}
+      borderRadius={borderRadius}
     >
       {text}
     </Button>
