@@ -3,10 +3,9 @@ import { VStack } from "@chakra-ui/react";
 
 import Layout from "../ui/generic/Layout";
 import PageTitle from "../ui/generic/text/PageTitle";
-import TextInput from "../ui/generic/form/TextInput";
+import TextInput from "../ui/specific/CurrencyInput";
 import SubmitButton from "../ui/generic/form/SubmitButton";
 import SelectInput from "../ui/generic/form/SelectInput";
-import { formatCurrency } from "../utils/formatCurrency";
 import Loading from "../ui/generic/form/Loading";
 import { gql, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
@@ -46,7 +45,6 @@ export default function Home() {
 
   const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
     const { totalValue, personsQuantity } = data;
-
     const totalValueNumber = Number(totalValue.replace(/[^0-9]/g, ""));
 
     if (!totalValueNumber) {
@@ -94,11 +92,6 @@ export default function Home() {
             placeholder={"R$ 100,00"}
             hookForm={register("totalValue", {
               required: "É necessário inserir o valor total.",
-
-              onChange(event) {
-                const { value } = event.target;
-                event.target.value = formatCurrency(value);
-              },
             })}
             errorMessage={errors.totalValue?.message}
           />
