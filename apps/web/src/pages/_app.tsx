@@ -3,11 +3,11 @@ import { AppProps } from "next/app";
 import { customizedTheme } from "../theme";
 import Head from "next/head";
 import { RelayEnvironmentProvider } from "react-relay";
-import { initRelayEnvironment } from "../relay/RelayEnvironment";
+import { environment } from "../relay/RelayEnvironment";
 
 function App({ Component, pageProps }: AppProps) {
   return (
-    <RelayEnvironmentProvider environment={initRelayEnvironment()}>
+    <RelayEnvironmentProvider environment={environment}>
       <ChakraProvider theme={customizedTheme}>
         <Head>
           <title>PixCollab - Woovi</title>

@@ -4,9 +4,18 @@ import {
   RecordSource,
   Store,
   FetchFunction,
+  Observable,
+  SubscribeFunction,
 } from "relay-runtime";
+import { createClient } from "graphql-ws";
 
+const isBrowser = typeof window !== "undefined";
 const HTTP_ENDPOINT = "http://localhost:4000";
+const wsClient = isBrowser
+  ? createClient({
+      url: "ws://localhost:4000",
+    })
+  : null;
 
 const fetchFn: FetchFunction = async (request, variables) => {
   const resp = await fetch(HTTP_ENDPOINT, {
@@ -15,10 +24,9 @@ const fetchFn: FetchFunction = async (request, variables) => {
       Accept:
         "application/graphql-response+json; charset=utf-8, application/json; charset=utf-8",
       "Content-Type": "application/json",
-      // <-- Additional headers like 'Authorization' would go here
     },
     body: JSON.stringify({
-      query: request.text, // <-- The GraphQL document composed by Relay
+      query: request.text,
       variables,
     }),
   });
@@ -26,28 +34,38 @@ const fetchFn: FetchFunction = async (request, variables) => {
   return await resp.json();
 };
 
-function createRelayEnvironment() {
-  return new Environment({
-    network: Network.create(fetchFn),
-    store: new Store(new RecordSource()),
+const subscribeFn: SubscribeFunction = (operation, variables) => {
+  return Observable.create((sink) => {
+    if (!operation.text)
+      return sink.error(new Error("Operation text cannot be empty"));
+
+    return wsClient?.subscribe(
+      {
+        operationName: operation.name,
+        query: operation.text,
+        variables,
+      },
+      // @ts-ignore
+      {
+        ...sink,
+        error: (err) => {
+          if (Array.isArray(err))
+            return sink.error(
+              new Error(err.map(({ message }) => message).join(", "))
+            ); // GraphQLError[]
+
+          return sink.error(err as Error);
+        },
+      }
+    );
   });
-}
+};
 
-let relayEnvironment: Environment | undefined;
-
-export function initRelayEnvironment() {
-  const environment = relayEnvironment ?? createRelayEnvironment();
-
-  // For SSG and SSR always create a new Relay environment.
-  if (typeof window === "undefined") {
-    return environment;
-  }
-
-  // Create the Relay environment once in the client
-  // and then reuse it.
-  if (!relayEnvironment) {
-    relayEnvironment = environment;
-  }
-
-  return relayEnvironment;
-}
+export const environment = new Environment({
+  network: wsClient
+    ? Network.create(fetchFn, subscribeFn)
+    : Network.create(fetchFn),
+  store: new Store(new RecordSource(), {
+    gcReleaseBufferSize: 10,
+  }),
+});
