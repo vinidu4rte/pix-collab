@@ -13,11 +13,8 @@ const GET_CHARGE = graphql`
       status
       value
       partialCharge {
-        value
-        transactionId
-        status
-        qrCode
         id
+        ...QrCodeChargeFragment
       }
     }
   }
@@ -49,11 +46,8 @@ export default function Charge({ chargeId }: { chargeId: string }) {
       {partialCharge.map((charge, index: number) => (
         <QrCodeCharge
           key={charge.id}
-          id={charge.transactionId}
-          status={charge.status}
-          value={charge.value / 100}
+          charge={charge}
           paymentNumber={index}
-          qrCode={charge.qrCode}
           hasDivider={index !== partialCharge.length - 1}
         />
       ))}
