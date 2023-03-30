@@ -21,7 +21,7 @@ import { Decimal } from "decimal.js";
 
 @Resolver(() => Charge)
 export class ChargeResolver {
-  @Query(() => Charge)
+  @Query(() => Charge, { nullable: true })
   async charge(@Arg("id") id: string) {
     const charge = await ChargeModel.findById(id);
 
@@ -116,6 +116,7 @@ export class ChargeResolver {
 
   @Subscription(() => Charge, {
     topics: "PARTIAL_CHARGE_PAYMENT",
+    nullable: true,
   })
   async newNotification(
     @Root() notificationPayload: { id: string },
@@ -124,7 +125,7 @@ export class ChargeResolver {
     const charge = await ChargeModel.findById(chargeId);
 
     if (!charge) {
-      throw new Error("Charge not found");
+      return null;
     }
 
     const formatedObject: Charge = {
