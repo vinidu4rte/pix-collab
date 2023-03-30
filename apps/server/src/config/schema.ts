@@ -8,4 +8,5 @@ export const createSchema = async () =>
   buildSchema({
     resolvers: [ChargeResolver],
     pubSub: pubsub,
+    emitSchemaFile: true,
   });
