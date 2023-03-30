@@ -8,7 +8,18 @@ import SubmitButton from "../ui/generic/form/SubmitButton";
 import SelectInput from "../ui/generic/form/SelectInput";
 import Loading from "../ui/generic/form/Loading";
 import { useRouter } from "next/router";
-import { formatCurrency } from "../utils/formatCurrency";
+import { graphql } from "relay-runtime";
+import { useMutation } from "react-relay";
+import type { pagesMutation } from "../../__generated__/pagesMutation.graphql";
+import { useState } from "react";
+
+const CREATE_CHARGE_MUTATION = graphql`
+  mutation pagesMutation($data: CreateChargeInput!) {
+    createCharge(data: $data) {
+      id
+    }
+  }
+`;
 
 type FormData = {
   totalValue: string;
@@ -17,6 +28,10 @@ type FormData = {
 
 export default function Home() {
   const router = useRouter();
+  const [loading, setIsLoading] = useState(false);
+  const [commitMutation, isMutationInFlight] = useMutation<pagesMutation>(
+    CREATE_CHARGE_MUTATION
+  );
 
   const {
     register,
@@ -56,7 +71,22 @@ export default function Home() {
     }
 
     const personsQuantityNumber = Number(personsQuantity);
+
+    commitMutation({
+      variables: {
+        data: {
+          value: totalValueNumber,
+          collaboratorsQuantity: personsQuantityNumber,
+        },
+      },
+      onCompleted: (data) => {
+        setIsLoading(true);
+        router.push(`/pay/${data.createCharge.id}`);
+      },
+    });
   };
+
+  if (isMutationInFlight || loading) return <Loading />;
 
   return (
     <Layout>
