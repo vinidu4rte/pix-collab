@@ -1,9 +1,13 @@
-import { ObjectType, Field } from "type-graphql";
+import { ObjectType, Field, ID } from "type-graphql";
+import { Node } from "../../../relay/interfaces/Node";
 
 @ObjectType()
-export class Charge {
-  @Field()
+export class Charge extends Node {
+  @Field(() => ID)
   id: string;
+
+  @Field(() => ID)
+  globalId: string;
 
   @Field()
   status: string;
