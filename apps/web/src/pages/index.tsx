@@ -7,7 +7,6 @@ import CurrencyInput from "../ui/specific/CurrencyInput";
 import SubmitButton from "../ui/generic/form/SubmitButton";
 import SelectInput from "../ui/generic/form/SelectInput";
 import Loading from "../ui/generic/form/Loading";
-import { gql, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 
 type FormData = {
@@ -15,21 +14,8 @@ type FormData = {
   personsQuantity: string;
 };
 
-const CREATE_CHARGE = gql`
-  mutation CreateCharge($data: CreateChargeInput!) {
-    createCharge(data: $data) {
-      id
-    }
-  }
-`;
-
 export default function Home() {
   const router = useRouter();
-  const [createCharge, { data, loading, error }] = useMutation(CREATE_CHARGE);
-
-  if (data) {
-    router.push(`/charge/${data.createCharge.id}`);
-  }
 
   const {
     register,
@@ -56,20 +42,7 @@ export default function Home() {
     }
 
     const personsQuantityNumber = Number(personsQuantity);
-
-    await createCharge({
-      variables: {
-        data: {
-          value: totalValueNumber,
-          collaboratorsQuantity: personsQuantityNumber,
-        },
-      },
-    });
   };
-
-  if (loading || data) {
-    return <Loading />;
-  }
 
   return (
     <Layout>
