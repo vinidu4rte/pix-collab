@@ -1,16 +1,9 @@
-import { gql, useMutation } from "@apollo/client";
-import { Box, Center, VStack, Text, Divider } from "@chakra-ui/react";
+import { Box, Center, VStack, Divider } from "@chakra-ui/react";
 import Image from "next/image";
 import SubmitButton from "../generic/form/SubmitButton";
 import Success from "../generic/svg/Success";
 import PageTitle from "../generic/text/PageTitle";
 import TextWithLabel from "../generic/text/TextWithLabel";
-
-const FAKE_CHARGE_PAYMENT = gql`
-  mutation Mutation($data: FakeChargePaymentInput!) {
-    fakeChargePayment(data: $data)
-  }
-`;
 
 interface Props {
   id: string;
@@ -29,17 +22,7 @@ export default function QrCodeCharge({
   qrCode,
   hasDivider,
 }: Props) {
-  const [createCharge, { loading }] = useMutation(FAKE_CHARGE_PAYMENT);
-
-  const onPayButtonClick = async () => {
-    await createCharge({
-      variables: {
-        data: {
-          transactionId: id,
-        },
-      },
-    });
-  };
+  const onPayButtonClick = async () => {};
 
   const formattedCurrency = value.toLocaleString("pt-BR", {
     currency: "BRL",
@@ -96,8 +79,8 @@ export default function QrCodeCharge({
               fontSize="12px"
               height={8}
               width={150}
-              isDisabled={loading}
-              isLoading={loading}
+              isDisabled={false}
+              isLoading={false}
               borderRadius={0}
               onClick={onPayButtonClick}
             />
