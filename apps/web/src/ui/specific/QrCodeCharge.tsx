@@ -15,7 +15,7 @@ const FAKE_CHARGE_PAYMENT = gql`
 interface Props {
   id: string;
   value: number;
-  status: "pending" | "paid";
+  status: string;
   paymentNumber: number;
   qrCode: string;
   hasDivider?: boolean;
