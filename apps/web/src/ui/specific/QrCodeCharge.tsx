@@ -5,7 +5,7 @@ import Success from "../generic/svg/Success";
 import PageTitle from "../generic/text/PageTitle";
 import TextWithLabel from "../generic/text/TextWithLabel";
 import { graphql } from "relay-runtime";
-import { useFragment } from "react-relay";
+import { useFragment, useMutation } from "react-relay";
 import type { QrCodeChargeFragment$key } from "../../../__generated__/QrCodeChargeFragment.graphql";
 
 const PARTIAL_CHARGE_FRAGMENT = graphql`
@@ -15,6 +15,12 @@ const PARTIAL_CHARGE_FRAGMENT = graphql`
     status
     transactionId
     qrCode
+  }
+`;
+
+const PAY_CHARGE_MUTATION = graphql`
+  mutation QrCodeChargeMutation($data: FakeChargePaymentInput!) {
+    fakeChargePayment(data: $data)
   }
 `;
 
@@ -33,6 +39,7 @@ export default function QrCodeCharge({
     PARTIAL_CHARGE_FRAGMENT,
     charge
   );
+  const [commitMutation, isMutationInFlight] = useMutation(PAY_CHARGE_MUTATION);
 
   const formattedValue = value / 100;
   const formattedCurrency = formattedValue.toLocaleString("pt-BR", {
@@ -60,7 +67,15 @@ export default function QrCodeCharge({
           1
         )} parte do pagamento concluída.`;
 
-  const onPayButtonClick = async () => {};
+  const onPayButtonClick = () => {
+    commitMutation({
+      variables: {
+        data: {
+          transactionId,
+        },
+      },
+    });
+  };
 
   return (
     <Box>
@@ -92,8 +107,8 @@ export default function QrCodeCharge({
               fontSize="12px"
               height={8}
               width={150}
-              isDisabled={false}
-              isLoading={false}
+              isDisabled={isMutationInFlight}
+              isLoading={isMutationInFlight}
               borderRadius={0}
               onClick={onPayButtonClick}
             />
