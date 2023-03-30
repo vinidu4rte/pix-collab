@@ -1,46 +1,6 @@
-import { gql, useQuery } from "@apollo/client";
-import { useRouter } from "next/router";
 import Layout from "../../ui/generic/Layout";
 import ChargeCompleted from "../../ui/specific/ChargeCompleted";
 import QrCodeCharge from "../../ui/specific/QrCodeCharge";
-
-const GET_CHARGE = gql`
-  query Charge($chargeId: String!) {
-    charge(id: $chargeId) {
-      id
-      status
-      collaboratorsQuantity
-      value
-      partialCharge {
-        id
-        correlationId
-        transactionId
-        status
-        value
-        qrCode
-      }
-    }
-  }
-`;
-
-const CHARGE_SUBSCRIPTION = gql`
-  subscription NewNotification($chargeId: String!) {
-    newNotification(chargeId: $chargeId) {
-      id
-      status
-      collaboratorsQuantity
-      value
-      partialCharge {
-        id
-        correlationId
-        transactionId
-        status
-        value
-        qrCode
-      }
-    }
-  }
-`;
 
 interface PartialCharge {
   id: string;
@@ -59,35 +19,29 @@ interface ChargeData {
 }
 
 export default function Charge({ chargeId }: any) {
-  const { data, loading, error, subscribeToMore } = useQuery<{
-    newNotification: ChargeData;
-    charge: ChargeData;
-  }>(GET_CHARGE, {
-    variables: { chargeId: chargeId },
-  });
-
-  subscribeToMore({
-    document: CHARGE_SUBSCRIPTION,
-    variables: { chargeId: chargeId },
-    updateQuery: (prev: any, { subscriptionData }: any) => {
-      if (!subscriptionData.data) return prev;
-      const newCharge = subscriptionData.data.newNotification;
-      return Object.assign({}, prev, {
-        charge: newCharge,
-      });
-    },
-  });
-
-  if (loading) {
-    return <div></div>;
-  }
-
-  if (error || !data) {
-    return <div>Error</div>;
-  }
-
-  const { charge } = data;
-  const { id, status, value, partialCharge } = charge;
+  const mockedCharge: ChargeData = {
+    id: "123",
+    status: "paid",
+    value: 1000,
+    collaboratorsQuantity: 2,
+    partialCharge: [
+      {
+        id: "123",
+        status: "paid",
+        transactionId: "123",
+        qrCode: "123",
+        value: 500,
+      },
+      {
+        id: "123",
+        status: "paid",
+        transactionId: "123",
+        qrCode: "123",
+        value: 500,
+      },
+    ],
+  };
+  const { id, status, value, partialCharge } = mockedCharge;
 
   if (status === "paid") {
     return (

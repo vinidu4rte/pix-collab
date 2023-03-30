@@ -11,14 +11,12 @@
     "copy-env": "cp .env.example .env"
   },
   "dependencies": {
-    "@apollo/client": "^3.7.10",
     "@chakra-ui/react": "^2.5.3",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@hookform/resolvers": "^3.0.0",
     "framer-motion": "^10.8.5",
     "graphql": "^16.6.0",
-    "graphql-ws": "^5.12.0",
     "next": "^13.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
