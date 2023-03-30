@@ -4,27 +4,38 @@ import SubmitButton from "../generic/form/SubmitButton";
 import Success from "../generic/svg/Success";
 import PageTitle from "../generic/text/PageTitle";
 import TextWithLabel from "../generic/text/TextWithLabel";
+import { graphql } from "relay-runtime";
+import { useFragment } from "react-relay";
+import type { QrCodeChargeFragment$key } from "../../../__generated__/QrCodeChargeFragment.graphql";
+
+const PARTIAL_CHARGE_FRAGMENT = graphql`
+  fragment QrCodeChargeFragment on PartialCharge {
+    id
+    value
+    status
+    transactionId
+    qrCode
+  }
+`;
 
 interface Props {
-  id: string;
-  value: number;
-  status: string;
+  charge: QrCodeChargeFragment$key;
   paymentNumber: number;
-  qrCode: string;
   hasDivider?: boolean;
 }
 
 export default function QrCodeCharge({
-  id,
-  value,
-  status,
+  charge,
   paymentNumber,
-  qrCode,
   hasDivider,
 }: Props) {
-  const onPayButtonClick = async () => {};
+  const { qrCode, status, transactionId, value } = useFragment(
+    PARTIAL_CHARGE_FRAGMENT,
+    charge
+  );
 
-  const formattedCurrency = value.toLocaleString("pt-BR", {
+  const formattedValue = value / 100;
+  const formattedCurrency = formattedValue.toLocaleString("pt-BR", {
     currency: "BRL",
     style: "currency",
   });
@@ -48,6 +59,8 @@ export default function QrCodeCharge({
         ][0].toUpperCase()}${paymentTextIndexes[paymentNumber].substring(
           1
         )} parte do pagamento concluída.`;
+
+  const onPayButtonClick = async () => {};
 
   return (
     <Box>
@@ -93,7 +106,7 @@ export default function QrCodeCharge({
         )}
         <TextWithLabel
           label="Identificador"
-          content={id}
+          content={transactionId}
           labelFontSize="20px"
           contentFontSize="16px"
           additionalStyles={{ paddingTop: 10 }}
