@@ -5,7 +5,8 @@
 
 type Charge {
   collaboratorsQuantity: Float!
-  id: String!
+  globalId: ID!
+  id: ID!
   partialCharge: [PartialCharge!]!
   status: String!
   value: Float!
@@ -35,9 +36,10 @@ type PartialCharge {
 }
 
 type Query {
-  charge(id: String!): Charge!
+  charge(id: String!): Charge
+  node(globalId: String!): Charge
 }
 
 type Subscription {
-  newNotification(chargeId: String!): Charge!
+  newNotification(chargeId: String!): Charge
 }
