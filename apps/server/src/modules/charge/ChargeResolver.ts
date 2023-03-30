@@ -7,6 +7,7 @@ import {
   Root,
   Subscription,
 } from "type-graphql";
+import { toGlobalId } from "graphql-relay";
 import { db } from "../../config/database";
 import { Woovi, WooviCreateChargeDto } from "../../lib/woovi";
 import { Charge } from "./dtos/entities/Charge";
@@ -25,10 +26,18 @@ export class ChargeResolver {
     const charge = await ChargeModel.findById(id);
 
     if (!charge) {
-      throw new Error("Charge not found");
+      return null;
     }
 
-    return charge;
+    const formatedObject: Charge = {
+      id: charge.id,
+      globalId: toGlobalId("Charge", charge.id),
+      collaboratorsQuantity: charge.collaboratorsQuantity,
+      status: charge.status,
+      value: charge.value,
+    };
+
+    return formatedObject;
   }
 
   @Mutation(() => Charge)
@@ -75,7 +84,16 @@ export class ChargeResolver {
       }
 
       session.commitTransaction();
-      return charge;
+
+      const formatedObject: Charge = {
+        id: charge.id,
+        globalId: toGlobalId("Charge", charge.id),
+        collaboratorsQuantity: charge.collaboratorsQuantity,
+        status: charge.status,
+        value: charge.value,
+      };
+
+      return formatedObject;
     } catch (error) {
       session.abortTransaction();
       console.log(error);
@@ -109,18 +127,20 @@ export class ChargeResolver {
       throw new Error("Charge not found");
     }
 
-    return charge;
+    const formatedObject: Charge = {
+      id: charge.id,
+      globalId: toGlobalId("Charge", charge.id),
+      collaboratorsQuantity: charge.collaboratorsQuantity,
+      status: charge.status,
+      value: charge.value,
+    };
+
+    return formatedObject;
   }
 
   @FieldResolver(() => [PartialCharge]!)
-  async partialCharge(@Root() charge: Charge | any) {
-    let chargeId;
-
-    if (charge._doc) {
-      chargeId = charge._doc._id;
-    } else {
-      chargeId = charge.id;
-    }
+  async partialCharge(@Root() charge: Charge) {
+    const chargeId = charge.id;
     return await PartialChargeModel.find({ chargeId });
   }
 }
