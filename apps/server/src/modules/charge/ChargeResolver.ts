@@ -7,6 +7,7 @@ import {
   Root,
   Subscription,
 } from "type-graphql";
+import { toGlobalId } from "graphql-relay";
 import { db } from "../../config/database";
 import { Woovi, WooviCreateChargeDto } from "../../lib/woovi";
 import { Charge } from "./dtos/entities/Charge";
@@ -29,12 +30,18 @@ export class ChargeResolver {
     const charge = await ChargeModel.findById(id);
 
     if (!charge) {
-      throw new Error("Charge not found");
+      return null;
     }
 
-    const formattedCharge = formatChargeDocumentForChargeObjectType(charge);
+    const formatedObject: Charge = {
+      id: charge.id,
+      globalId: toGlobalId("Charge", charge.id),
+      collaboratorsQuantity: charge.collaboratorsQuantity,
+      status: charge.status,
+      value: charge.value,
+    };
 
-    return formattedCharge;
+    return formatedObject;
   }
 
   @Mutation(() => Charge)
@@ -82,9 +89,15 @@ export class ChargeResolver {
 
       session.commitTransaction();
 
-      const formattedCharge = formatChargeDocumentForChargeObjectType(charge);
+      const formatedObject: Charge = {
+        id: charge.id,
+        globalId: toGlobalId("Charge", charge.id),
+        collaboratorsQuantity: charge.collaboratorsQuantity,
+        status: charge.status,
+        value: charge.value,
+      };
 
-      return formattedCharge;
+      return formatedObject;
     } catch (error) {
       session.abortTransaction();
       console.log(error);
@@ -118,30 +131,20 @@ export class ChargeResolver {
       throw new Error("Charge not found");
     }
 
-    const formattedCharge = formatChargeDocumentForChargeObjectType(charge);
+    const formatedObject: Charge = {
+      id: charge.id,
+      globalId: toGlobalId("Charge", charge.id),
+      collaboratorsQuantity: charge.collaboratorsQuantity,
+      status: charge.status,
+      value: charge.value,
+    };
 
-    return formattedCharge;
+    return formatedObject;
   }
 
   @FieldResolver(() => [PartialCharge]!)
   async partialCharge(@Root() charge: Charge) {
     const chargeId = charge.id;
-
-    const partialCharges = await PartialChargeModel.find({ chargeId });
-
-    const formattedPartialCharges = partialCharges.map(
-      (partialCharge: PartialChargeDocument): PartialCharge => {
-        return {
-          id: partialCharge.id,
-          value: partialCharge.value,
-          correlationId: partialCharge.correlationId,
-          qrCode: partialCharge.qrCode,
-          transactionId: partialCharge.transactionId,
-          status: partialCharge.status,
-        };
-      }
-    );
-
-    return formattedPartialCharges;
+    return await PartialChargeModel.find({ chargeId });
   }
 }
