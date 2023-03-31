@@ -10,10 +10,10 @@ import {
 import { createClient } from "graphql-ws";
 
 const isBrowser = typeof window !== "undefined";
-const HTTP_ENDPOINT = "http://localhost:4000";
+const HTTP_ENDPOINT = "https://woovi-challenge-server.onrender.com";
 const wsClient = isBrowser
   ? createClient({
-      url: "ws://localhost:4000",
+      url: "wss://woovi-challenge-server.onrender.com",
     })
   : null;
 
