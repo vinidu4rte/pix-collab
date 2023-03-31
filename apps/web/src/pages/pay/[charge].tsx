@@ -1,9 +1,11 @@
 import Layout from "../../ui/generic/Layout";
 import ChargeCompleted from "../../ui/specific/ChargeCompleted";
 import QrCodeCharge from "../../ui/specific/QrCodeCharge";
-import { useLazyLoadQuery } from "react-relay";
+import { useLazyLoadQuery, useSubscription } from "react-relay";
 import { graphql } from "relay-runtime";
 import type { ChargeQuery as ChargeQueryType } from "../../../__generated__/ChargeQuery.graphql";
+import type { ChargeSubscription as ChargeSubscriptionType } from "../../../__generated__/ChargeSubscription.graphql";
+import { useMemo } from "react";
 
 const GET_CHARGE = graphql`
   query ChargeQuery($chargeId: String!) {
@@ -20,7 +22,34 @@ const GET_CHARGE = graphql`
   }
 `;
 
+const CHARGE_SUBSCRIPTION = graphql`
+  subscription ChargeSubscription($chargeId: String!) {
+    newNotification(chargeId: $chargeId) {
+      id
+      globalId
+      status
+      value
+      partialCharge {
+        id
+        ...QrCodeChargeFragment
+      }
+    }
+  }
+`;
+
 export default function Charge({ chargeId }: { chargeId: string }) {
+  const config = useMemo(
+    () => ({
+      variables: {
+        chargeId,
+      },
+      subscription: CHARGE_SUBSCRIPTION,
+    }),
+    [chargeId]
+  );
+
+  useSubscription<ChargeSubscriptionType>(config);
+
   const { charge } = useLazyLoadQuery<ChargeQueryType>(GET_CHARGE, {
     chargeId,
   });
