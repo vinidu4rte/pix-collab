@@ -1,3 +1,4 @@
+/* eslint-disable turbo/no-undeclared-env-vars */
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { split, HttpLink } from "@apollo/client";
 import { getMainDefinition } from "@apollo/client/utilities";
@@ -7,13 +8,13 @@ import { createClient } from "graphql-ws";
 const isBrowser = typeof window !== "undefined";
 
 const httpLink = new HttpLink({
-  uri: "https://woovi-challenge-server.onrender.com",
+  uri: process.env.SERVER_HTTP_URL || "http://localhost:4000",
 });
 
 const wsLink = isBrowser
   ? new GraphQLWsLink(
       createClient({
-        url: "wss://woovi-challenge-server.onrender.com",
+        url: process.env.SERVER_WS_URL || "ws://localhost:4000",
       })
     )
   : null;
