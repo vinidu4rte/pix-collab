@@ -13,26 +13,32 @@ import { Charge } from "./dtos/entities/Charge";
 import { PartialCharge } from "./dtos/entities/PartialCharge";
 import { CreateChargeInput } from "./dtos/inputs/CreateChargeInput";
 import ChargeModel from "./models/ChargeModel";
-import { PartialChargeModel } from "./models/PartialChargeModel";
+import {
+  PartialChargeDocument,
+  PartialChargeModel,
+} from "./models/PartialChargeModel";
 import { randomUUID } from "crypto";
 import { FakeChargePaymentInput } from "./dtos/inputs/FakeChargePaymentInput";
 import { Decimal } from "decimal.js";
+import { formatChargeDocumentForChargeObjectType } from "./utils/formatChargeDocumentForChargeObjectType";
 
 @Resolver(() => Charge)
 export class ChargeResolver {
   @Query(() => Charge)
-  async charge(@Arg("id") id: string) {
+  async charge(@Arg("id") id: string): Promise<Charge> {
     const charge = await ChargeModel.findById(id);
 
     if (!charge) {
       throw new Error("Charge not found");
     }
 
-    return charge;
+    const formattedCharge = formatChargeDocumentForChargeObjectType(charge);
+
+    return formattedCharge;
   }
 
   @Mutation(() => Charge)
-  async createCharge(@Arg("data") data: CreateChargeInput) {
+  async createCharge(@Arg("data") data: CreateChargeInput): Promise<Charge> {
     const session = await db.getInstance().startSession();
 
     try {
@@ -75,7 +81,10 @@ export class ChargeResolver {
       }
 
       session.commitTransaction();
-      return charge;
+
+      const formattedCharge = formatChargeDocumentForChargeObjectType(charge);
+
+      return formattedCharge;
     } catch (error) {
       session.abortTransaction();
       console.log(error);
@@ -102,25 +111,37 @@ export class ChargeResolver {
   async newNotification(
     @Root() notificationPayload: { id: string },
     @Arg("chargeId") chargeId: string
-  ) {
+  ): Promise<Charge> {
     const charge = await ChargeModel.findById(chargeId);
 
     if (!charge) {
       throw new Error("Charge not found");
     }
 
-    return charge;
+    const formattedCharge = formatChargeDocumentForChargeObjectType(charge);
+
+    return formattedCharge;
   }
 
   @FieldResolver(() => [PartialCharge]!)
-  async partialCharge(@Root() charge: Charge | any) {
-    let chargeId;
+  async partialCharge(@Root() charge: Charge) {
+    const chargeId = charge.id;
 
-    if (charge._doc) {
-      chargeId = charge._doc._id;
-    } else {
-      chargeId = charge.id;
-    }
-    return await PartialChargeModel.find({ chargeId });
+    const partialCharges = await PartialChargeModel.find({ chargeId });
+
+    const formattedPartialCharges = partialCharges.map(
+      (partialCharge: PartialChargeDocument): PartialCharge => {
+        return {
+          id: partialCharge.id,
+          value: partialCharge.value,
+          correlationId: partialCharge.correlationId,
+          qrCode: partialCharge.qrCode,
+          transactionId: partialCharge.transactionId,
+          status: partialCharge.status,
+        };
+      }
+    );
+
+    return formattedPartialCharges;
   }
 }
