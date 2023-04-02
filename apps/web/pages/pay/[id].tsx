@@ -59,6 +59,7 @@ interface ChargeData {
 }
 
 export default function Charge({ chargeId }: any) {
+  const router = useRouter();
   const { data, loading, error, subscribeToMore } = useQuery<{
     newNotification: ChargeData;
     charge: ChargeData;
@@ -83,7 +84,8 @@ export default function Charge({ chargeId }: any) {
   }
 
   if (error || !data) {
-    return <div>Error</div>;
+    router.push("/");
+    return <div></div>;
   }
 
   const { charge } = data;
