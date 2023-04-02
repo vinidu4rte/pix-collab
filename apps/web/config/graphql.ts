@@ -8,13 +8,13 @@ import { createClient } from "graphql-ws";
 const isBrowser = typeof window !== "undefined";
 
 const httpLink = new HttpLink({
-  uri: process.env.SERVER_HTTP_URL || "http://localhost:4000",
+  uri: process.env.NEXT_PUBLIC_SERVER_HTTP_URL || "http://localhost:4000",
 });
 
 const wsLink = isBrowser
   ? new GraphQLWsLink(
       createClient({
-        url: process.env.SERVER_WS_URL || "ws://localhost:4000",
+        url: process.env.NEXT_PUBLIC_SERVER_WS_URL || "ws://localhost:4000",
       })
     )
   : null;
