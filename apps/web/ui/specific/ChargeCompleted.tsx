@@ -26,7 +26,7 @@ export default function ChargeCompleted({
   };
 
   return (
-    <Layout>
+    <Layout enablesHomeRedirect>
       <Center pt={12} flexDirection="column">
         <Success />
         <PageTitle fontSize="32px">Pagamento confirmado</PageTitle>

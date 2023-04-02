@@ -1,11 +1,13 @@
 import { Container } from "@chakra-ui/react";
+import Link from "next/link";
 import WooviLogo from "./svg/WooviLogo";
 
 interface Props {
   children: React.ReactNode;
+  enablesHomeRedirect?: boolean;
 }
 
-export default function Layout({ children }: Props) {
+export default function Layout({ children, enablesHomeRedirect }: Props) {
   return (
     <Container
       my={8}
@@ -16,7 +18,13 @@ export default function Layout({ children }: Props) {
       centerContent
       minHeight={"80vh"}
     >
-      <WooviLogo />
+      {enablesHomeRedirect ? (
+        <Link href="/">
+          <WooviLogo />
+        </Link>
+      ) : (
+        <WooviLogo />
+      )}
       {children}
     </Container>
   );
