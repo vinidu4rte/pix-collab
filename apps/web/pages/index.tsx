@@ -28,7 +28,7 @@ export default function Home() {
   const [createCharge, { data, loading, error }] = useMutation(CREATE_CHARGE);
 
   if (data) {
-    router.push(`/charge/${data.createCharge.id}`);
+    router.push(`/pay/${data.createCharge.id}`);
   }
 
   const {
