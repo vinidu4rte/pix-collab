@@ -30,7 +30,8 @@ export default function CurrencyInput({
       <FormLabel htmlFor={id}>{label}</FormLabel>
       <NumberInput
         min={100}
-        max={500000}
+        max={1000000}
+        clampValueOnBlur={false}
         isValidCharacter={(char) => {
           return "R$0123456789,".includes(char);
         }}

@@ -9,6 +9,7 @@ import SelectInput from "../ui/generic/form/SelectInput";
 import Loading from "../ui/generic/form/Loading";
 import { gql, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
+import { formatCurrency } from "../utils/formatCurrency";
 
 type FormData = {
   totalValue: string;
@@ -51,6 +52,19 @@ export default function Home() {
       setError("totalValue", {
         type: "manual",
         message: "É necessário inserir o valor total.",
+      });
+      return;
+    }
+
+    const minTotalValue = 100;
+    const maxTotalValue = 1000000;
+
+    if (totalValueNumber < minTotalValue || totalValueNumber > maxTotalValue) {
+      setError("totalValue", {
+        type: "manual",
+        message: `O valor total deve ser entre ${formatCurrency(
+          minTotalValue / 100
+        )} e ${formatCurrency(maxTotalValue / 100)}.`,
       });
       return;
     }
