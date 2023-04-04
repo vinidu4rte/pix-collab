@@ -1,73 +1,159 @@
-# Turborepo starter
+<div align="center">
+  <h1>Pix Collab </h1>
+    <img src="https://user-images.githubusercontent.com/80220673/229859140-26146356-eada-4084-8f90-db5e371da2e1.png" alt="Pix collab app screenshot" height="40%" width="40%">
+  <p align="center">
+    Pix Collab implements split payment concept using Woovi environment
+    <br />
+    <a href="https://pix-collab.vercel.app/">View Demo</a>
+    ·
+    <a href="https://github.com/vinidu4rte/woovi-challenge/issues">Report a Bug</a>
+  </p>
+</div>
 
-This is an official npm starter turborepo.
+# Table of contents
 
-## What's inside?
+- [What problem Pix Collab solves?](#what-problem-pix-collab-solves)
+- [Architecture](#architecture)
+  - [Data Modeling](#data-modeling)
+  - [Usecases explained](#usecases-explained)
+    - [Create charge](#create-charge)
+    - [Charge payment](#charge-payment)
+- [Figma](#figma)
+- [Getting Started](#getting-started)
+  - [Installation](#installation)
+  - [Developer environment](#developer-environment)
+  - [Copy environment files](#copy-environment-files)
+  - [Fill environment files](#fill-environment-files)
+  - [Install the dependencies](#install-the-dependencies)
+  - [Run both web and server packages](#run-both--web--and--server--packages)
+- [Contributing](#contributing)
+- [References](#references)
+- [Contact](#contact)
 
-This turborepo uses [npm](https://www.npmjs.com/) as a package manager. It includes the following packages/apps:
+<br>
 
-### Apps and Packages
+## What problem Pix Collab solves?
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `ui`: a stub React component library shared by both `web` and `docs` applications
-- `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `tsconfig`: `tsconfig.json`s used throughout the monorepo
+Are you tired of splitting the bill at restaurants, cafes, and other places with your friends? Do you struggle to keep track of who owes what and end up with awkward conversations about money? If so, you're not alone.
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+Pix is a fast, secure, and convenient payment method in Brazil, but it's not always easy to use, especially when you want to split a charge among multiple people. With Pix Collab, you can easily split the bill with your friends and pay using Pix. Our app generates multiple Pix charges for a single bill, each with the exact amount that each person owes, making it easier for everyone to pay their share.
 
-### Utilities
+<br>
 
-This turborepo has some additional tools already setup for you:
+## Architecture
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+### Data modeling
 
-### Build
+<img src="https://user-images.githubusercontent.com/80220673/229806862-75b087d1-010c-4cf5-999a-a276df006664.png" alt="Pix Collab data modeling">
 
-To build all apps and packages, run the following command:
+<br>
+
+### Usecases explained
+
+#### Create charge
+
+<img src="https://user-images.githubusercontent.com/80220673/229813773-f2090b9f-ed84-42c7-b80e-011eaf9495c1.png" alt="Create charge usecase explained in Excalidraw">
+
+<br>
+
+#### Charge payment
+
+<img src="https://user-images.githubusercontent.com/80220673/229819212-b212ef27-b417-4fd4-8fac-02bc0b2b657d.png" alt="Charge payment usecase explained in Excalidraw">
+
+<br>
+
+## Figma
+
+All app design are available in <a href="https://www.figma.com/file/2u131ZDIGr8TckvBHgMUEV/pix-collab?node-id=0%3A1&t=zzmW0bSJ1umwBcU8-1">Pix Collab figma project</a>.
+<img src="https://user-images.githubusercontent.com/80220673/229820241-309b714d-0718-47af-90c9-b62df4bdd682.png" alt="Figma project big picture">
+
+## Getting Started
+
+### Installation
+
+Clone the repo
 
 ```
-cd my-turborepo
-npm run build
+git clone git@github.com:vinidu4rte/woovi-challenge.git
 ```
 
-### Develop
+### Developer environment
 
-To develop all apps and packages, run the following command:
+#### Setup Docker + MongoDB
 
+```sh
+npm run db:up
 ```
-cd my-turborepo
+
+### Copy environment files
+
+```sh
+npm run copy-envs
+```
+
+### Fill environment files
+
+```sh
+### apps/server/.env
+
+# it will be necessary create a Woovi seller account and create a webhook to point server url. To create a tunneling for your localhost, use ngrok.
+WOOVI_API_KEY=
+WOOVI_WEBHOOK_SECRET=
+```
+
+```sh
+### apps/web/.env
+
+# web envs already has the deployed server URL, but could be easily changed for localhost
+NEXT_PUBLIC_SERVER_HTTP_URL=https://woovi-challenge-server.onrender.com
+NEXT_PUBLIC_SERVER_WS_URL=wss://woovi-challenge-server.onrender.com
+```
+
+### Install the dependencies
+
+```sh
+npm install
+```
+
+### Run app in development
+
+If you have completed the necessary setup for the required packages, you can run them concurrently with a single command:
+
+```bash
 npm run dev
 ```
 
-### Remote Caching
+## Contributing
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+Contributions are welcome from everyone! Here's how you can get started:
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
+### Issues
 
-```
-cd my-turborepo
-npx turbo login
-```
+If you encounter any bugs or have any feature requests, please create an issue with a description of the problem
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+### Pull Requests
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your turborepo:
+Pull requests from anyone are appreciated and can help make this project better! To get started, follow these steps:
 
-```
-npx turbo link
-```
+1. Fork the repository
+2. Clone the repository to your local machine
+3. Create a new branch for your changes and switch to it (`git checkout -b feat/featureName`)
+4. Make your changes and commit them (`git commit -m 'feat: add commit context'`)
+5. Push your changes to your fork (`git push origin feat/featureName`)
+6. Create a pull request in the original repository
 
-## Useful Links
+## References
 
-Learn more about the power of Turborepo:
+- [Apollo GraphQL](https://www.apollographql.com/docs/)
+- [Nextjs](https://nextjs.org/docs/getting-started)
+- [ChakraUI](https://chakra-ui.com/getting-started)
+- [Awesome Woovi Challenge](https://github.com/entria/awesome-woovi-challenge)
+- [NotDiscord](https://github.com/Eckzzo/notdiscord)
+- [TicoTeco](https://github.com/aripiprazole/ticoteco)
+- [Fakeddit](https://github.com/noghartt/fakeddit)
+- [Violetit](https://github.com/nogw/violetit)
 
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+## Contact
+
+- Twitter - [@etraudv](https://twitter.com/etraudv)
+- Discord - vduarte#6230

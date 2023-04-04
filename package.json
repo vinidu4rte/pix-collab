@@ -12,7 +12,9 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "web:start": "cd apps/web && npm start",
-    "server:start": "cd apps/server && npm start"
+    "server:start": "cd apps/server && npm start",
+    "copy-envs": "turbo run copy-env",
+    "db:up": "cd apps/server && docker-compose up -d"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
