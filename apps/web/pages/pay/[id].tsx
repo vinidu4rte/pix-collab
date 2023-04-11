@@ -1,8 +1,11 @@
-import { gql, useQuery } from "@apollo/client";
+import { ApolloQueryResult, gql, useSubscription } from "@apollo/client";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { client } from "../../config/graphql";
 import { useRouter } from "next/router";
 import Layout from "../../ui/generic/Layout";
 import ChargeCompleted from "../../ui/specific/ChargeCompleted";
 import QrCodeCharge from "../../ui/specific/QrCodeCharge";
+import { useEffect, useState } from "react";
 
 const GET_CHARGE = gql`
   query Charge($chargeId: String!) {
@@ -58,38 +61,65 @@ interface ChargeData {
   partialCharge: PartialCharge[];
 }
 
-export default function Charge({ chargeId }: any) {
-  const router = useRouter();
-  const { data, loading, error, subscribeToMore } = useQuery<{
-    newNotification: ChargeData;
-    charge: ChargeData;
-  }>(GET_CHARGE, {
-    variables: { chargeId: chargeId },
+interface ChargeQuery {
+  charge: ChargeData;
+}
+
+interface ChargeSubscription {
+  newNotification: ChargeData;
+}
+
+export const getServerSideProps: GetServerSideProps<{
+  charge: ChargeData;
+}> = async (context) => {
+  const chargeId = context.query.id;
+
+  try {
+    const { data, error, errors } = await client.query<ChargeQuery>({
+      query: GET_CHARGE,
+      variables: { chargeId: chargeId },
+      fetchPolicy: "network-only",
+    });
+
+    if (!data || error || errors) {
+      return {
+        notFound: true,
+      };
+    }
+
+    const charge = data.charge;
+
+    return {
+      props: {
+        charge,
+      },
+    };
+  } catch (e) {
+    return {
+      notFound: true,
+    };
+  }
+};
+
+export default function Charge({
+  charge,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const [chargeData, setChargeData] = useState<ChargeData>(charge);
+
+  const { data } = useSubscription<ChargeSubscription>(CHARGE_SUBSCRIPTION, {
+    variables: { chargeId: charge.id },
+    shouldResubscribe: true,
   });
 
-  subscribeToMore({
-    document: CHARGE_SUBSCRIPTION,
-    variables: { chargeId: chargeId },
-    updateQuery: (prev: any, { subscriptionData }: any) => {
-      if (!subscriptionData.data) return prev;
-      const newCharge = subscriptionData.data.newNotification;
-      return Object.assign({}, prev, {
-        charge: newCharge,
-      });
-    },
-  });
+  useEffect(() => {
+    if (!data || !data.newNotification) return;
 
-  if (loading) {
-    return <div></div>;
-  }
+    const charge = data.newNotification;
 
-  if (error || !data) {
-    router.push("/");
-    return <div></div>;
-  }
+    setChargeData(charge);
+  }, [data]);
 
-  const { charge } = data;
-  const { id, status, value, partialCharge } = charge;
+  const { id, status, value, partialCharge } = chargeData;
 
   if (status === "paid") {
     return (
@@ -117,9 +147,3 @@ export default function Charge({ chargeId }: any) {
     </Layout>
   );
 }
-
-Charge.getInitialProps = async (ctx: any) => {
-  const chargeId = ctx.query.id;
-
-  return { chargeId };
-};
