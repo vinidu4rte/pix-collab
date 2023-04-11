@@ -1,3 +1,4 @@
+/* eslint-disable turbo/no-undeclared-env-vars */
 import { createClient } from "graphql-ws";
 import { useMemo } from "react";
 import {
@@ -31,8 +32,10 @@ const fetchFn: FetchFunction = async (request, variables) => {
 };
 
 const isBrowser = typeof window !== "undefined";
-const HTTP_ENDPOINT = "http://localhost:4000";
-const WS_ENDPOINT = "ws://localhost:4000";
+const HTTP_ENDPOINT =
+  process.env.NEXT_PUBLIC_SERVER_HTTP_URL || "http://localhost:4000";
+const WS_ENDPOINT =
+  process.env.NEXT_PUBLIC_SERVER_WS_URL || "ws://localhost:4000";
 
 const wsClient = isBrowser
   ? createClient({
