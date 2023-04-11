@@ -1,11 +1,11 @@
 import Layout from "../../ui/generic/Layout";
 import ChargeCompleted from "../../ui/specific/ChargeCompleted";
 import QrCodeCharge from "../../ui/specific/QrCodeCharge";
-import { useLazyLoadQuery, useSubscription } from "react-relay";
-import { graphql } from "relay-runtime";
-import type { ChargeQuery as ChargeQueryType } from "../../../__generated__/ChargeQuery.graphql";
+import { useSubscription, fetchQuery } from "react-relay";
+import { graphql, GraphQLSubscriptionConfig } from "relay-runtime";
 import type { ChargeSubscription as ChargeSubscriptionType } from "../../../__generated__/ChargeSubscription.graphql";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { initEnvironment } from "../../relay/RelayEnvironment";
 
 const GET_CHARGE = graphql`
   query ChargeQuery($chargeId: String!) {
@@ -37,28 +37,50 @@ const CHARGE_SUBSCRIPTION = graphql`
   }
 `;
 
-export default function Charge({ chargeId }: { chargeId: string }) {
-  const config = useMemo(
+export async function getServerSideProps(ctx: any) {
+  const chargeId = ctx.query.charge;
+  const environment = initEnvironment(undefined);
+  const queryProps = await fetchQuery(
+    environment,
+    GET_CHARGE,
+    {
+      chargeId,
+    },
+    {
+      fetchPolicy: "network-only",
+    }
+  ).toPromise();
+
+  const initialRecords = environment.getStore().getSource().toJSON();
+
+  return {
+    props: {
+      queryProps,
+      initialRecords,
+    },
+  };
+}
+
+export default function Charge({ queryProps }: any) {
+  const { charge } = queryProps;
+  const [chargeData, setChargeData] = useState(charge);
+  const { id, status, value, partialCharge } = chargeData;
+
+  const config = useMemo<GraphQLSubscriptionConfig<ChargeSubscriptionType>>(
     () => ({
       variables: {
-        chargeId,
+        chargeId: id,
       },
       subscription: CHARGE_SUBSCRIPTION,
+      updater: (_, data) => {
+        const newNotification = data.newNotification;
+        setChargeData(newNotification);
+      },
     }),
-    [chargeId]
+    [id]
   );
 
   useSubscription<ChargeSubscriptionType>(config);
-
-  const { charge } = useLazyLoadQuery<ChargeQueryType>(GET_CHARGE, {
-    chargeId,
-  });
-
-  if (!charge) {
-    return <div>Carregando...</div>;
-  }
-
-  const { id, status, value, partialCharge } = charge;
 
   if (status === "paid") {
     return (
@@ -72,7 +94,7 @@ export default function Charge({ chargeId }: { chargeId: string }) {
 
   return (
     <Layout>
-      {partialCharge.map((charge, index: number) => (
+      {partialCharge.map((charge: any, index: number) => (
         <QrCodeCharge
           key={charge.id}
           charge={charge}
@@ -83,9 +105,3 @@ export default function Charge({ chargeId }: { chargeId: string }) {
     </Layout>
   );
 }
-
-Charge.getInitialProps = async (ctx: any) => {
-  const chargeId = ctx.query.charge;
-
-  return { chargeId };
-};
