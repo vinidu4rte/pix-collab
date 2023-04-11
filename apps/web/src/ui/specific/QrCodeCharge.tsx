@@ -47,16 +47,7 @@ export default function QrCodeCharge({
     style: "currency",
   });
 
-  const paymentTextIndexes = [
-    "primeira",
-    "segunda",
-    "terceira",
-    "quarta",
-    "quinta",
-    "sexta",
-    "sétima",
-    "oitava",
-  ];
+  const paymentTextIndexes = ["primeira", "segunda", "terceira", "quarta"];
 
   const textTitle =
     status === "pending"
