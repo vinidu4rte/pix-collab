@@ -1,10 +1,11 @@
-import { ApolloQueryResult, gql } from "@apollo/client";
+import { ApolloQueryResult, gql, useSubscription } from "@apollo/client";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { client } from "../../config/graphql";
 import { useRouter } from "next/router";
 import Layout from "../../ui/generic/Layout";
 import ChargeCompleted from "../../ui/specific/ChargeCompleted";
 import QrCodeCharge from "../../ui/specific/QrCodeCharge";
+import { useEffect, useState } from "react";
 
 const GET_CHARGE = gql`
   query Charge($chargeId: String!) {
@@ -60,13 +61,21 @@ interface ChargeData {
   partialCharge: PartialCharge[];
 }
 
+interface ChargeQuery {
+  charge: ChargeData;
+}
+
+interface ChargeSubscription {
+  newNotification: ChargeData;
+}
+
 export const getServerSideProps: GetServerSideProps<{
   charge: ChargeData;
 }> = async (context) => {
   const chargeId = context.query.id;
 
   try {
-    const { data, error, errors } = await client.query({
+    const { data, error, errors } = await client.query<ChargeQuery>({
       query: GET_CHARGE,
       variables: { chargeId: chargeId },
       fetchPolicy: "network-only",
@@ -78,7 +87,7 @@ export const getServerSideProps: GetServerSideProps<{
       };
     }
 
-    const charge: ChargeData = data.charge;
+    const charge = data.charge;
 
     return {
       props: {
@@ -95,19 +104,22 @@ export const getServerSideProps: GetServerSideProps<{
 export default function Charge({
   charge,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  // subscribeToMore({
-  //   document: CHARGE_SUBSCRIPTION,
-  //   variables: { chargeId: chargeId },
-  //   updateQuery: (prev: any, { subscriptionData }: any) => {
-  //     if (!subscriptionData.data) return prev;
-  //     const newCharge = subscriptionData.data.newNotification;
-  //     return Object.assign({}, prev, {
-  //       charge: newCharge,
-  //     });
-  //   },
-  // });
+  const [chargeData, setChargeData] = useState<ChargeData>(charge);
 
-  const { id, status, value, partialCharge } = charge;
+  const { data } = useSubscription<ChargeSubscription>(CHARGE_SUBSCRIPTION, {
+    variables: { chargeId: charge.id },
+    shouldResubscribe: true,
+  });
+
+  useEffect(() => {
+    if (!data || !data.newNotification) return;
+
+    const charge = data.newNotification;
+
+    setChargeData(charge);
+  }, [data]);
+
+  const { id, status, value, partialCharge } = chargeData;
 
   if (status === "paid") {
     return (
