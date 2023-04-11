@@ -1,21 +1,17 @@
+import { createClient } from "graphql-ws";
+import { useMemo } from "react";
 import {
   Environment,
+  FetchFunction,
   Network,
+  Observable,
   RecordSource,
   Store,
-  FetchFunction,
-  Observable,
   SubscribeFunction,
 } from "relay-runtime";
-import { createClient } from "graphql-ws";
+import { RecordMap } from "relay-runtime/lib/store/RelayStoreTypes";
 
-const isBrowser = typeof window !== "undefined";
-const HTTP_ENDPOINT = "https://woovi-challenge-server.onrender.com";
-const wsClient = isBrowser
-  ? createClient({
-      url: "wss://woovi-challenge-server.onrender.com",
-    })
-  : null;
+let relayEnvironment: Environment;
 
 const fetchFn: FetchFunction = async (request, variables) => {
   const resp = await fetch(HTTP_ENDPOINT, {
@@ -33,6 +29,16 @@ const fetchFn: FetchFunction = async (request, variables) => {
 
   return await resp.json();
 };
+
+const isBrowser = typeof window !== "undefined";
+const HTTP_ENDPOINT = "http://localhost:4000";
+const WS_ENDPOINT = "ws://localhost:4000";
+
+const wsClient = isBrowser
+  ? createClient({
+      url: WS_ENDPOINT,
+    })
+  : null;
 
 const subscribeFn: SubscribeFunction = (operation, variables) => {
   return Observable.create((sink) => {
@@ -52,7 +58,7 @@ const subscribeFn: SubscribeFunction = (operation, variables) => {
           if (Array.isArray(err))
             return sink.error(
               new Error(err.map(({ message }) => message).join(", "))
-            ); // GraphQLError[]
+            );
 
           return sink.error(err as Error);
         },
@@ -61,11 +67,37 @@ const subscribeFn: SubscribeFunction = (operation, variables) => {
   });
 };
 
-export const environment = new Environment({
-  network: wsClient
-    ? Network.create(fetchFn, subscribeFn)
-    : Network.create(fetchFn),
-  store: new Store(new RecordSource(), {
-    gcReleaseBufferSize: 10,
-  }),
-});
+function createEnvironment(initialRecords: RecordMap | undefined) {
+  return new Environment({
+    network: wsClient
+      ? Network.create(fetchFn, subscribeFn)
+      : Network.create(fetchFn),
+    store: new Store(new RecordSource(), {
+      gcReleaseBufferSize: 10,
+    }),
+  });
+}
+
+export function initEnvironment(initialRecords: RecordMap | undefined) {
+  const environment = relayEnvironment ?? createEnvironment(initialRecords);
+
+  if (initialRecords) {
+    environment.getStore().publish(new RecordSource(initialRecords));
+  }
+
+  // For SSG and SSR always create a new Relay environment
+  if (!isBrowser) return environment;
+
+  // Create the Relay environment once in the client
+  if (!relayEnvironment) relayEnvironment = environment;
+
+  return relayEnvironment;
+}
+
+export function useEnvironment(initialRecords: any) {
+  const store = useMemo(
+    () => initEnvironment(initialRecords),
+    [initialRecords]
+  );
+  return store;
+}
