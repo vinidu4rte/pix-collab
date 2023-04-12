@@ -4,6 +4,8 @@ import { customizedTheme } from "../theme";
 import Head from "next/head";
 import { ReactRelayContext } from "react-relay";
 import { useEnvironment } from "../relay/RelayEnvironment";
+import { ErrorBoundary } from "react-error-boundary";
+import Error from "../ui/specific/Error";
 
 function App({ Component, pageProps }: AppProps) {
   const environment = useEnvironment(pageProps.initialRecords);
@@ -14,7 +16,9 @@ function App({ Component, pageProps }: AppProps) {
         <Head>
           <title>PixCollab - Woovi</title>
         </Head>
-        <Component {...pageProps} />
+        <ErrorBoundary fallbackRender={Error}>
+          <Component {...pageProps} />
+        </ErrorBoundary>
       </ChakraProvider>
     </ReactRelayContext.Provider>
   );
