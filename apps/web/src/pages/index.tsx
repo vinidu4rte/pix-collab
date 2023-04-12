@@ -12,6 +12,7 @@ import { graphql } from "relay-runtime";
 import { useMutation } from "react-relay";
 import type { pagesMutation } from "../../__generated__/pagesMutation.graphql";
 import { useState } from "react";
+import { formatCurrency } from "../utils/formatCurrency";
 
 const CREATE_CHARGE_MUTATION = graphql`
   mutation pagesMutation($data: CreateChargeInput!) {

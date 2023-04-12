@@ -14,14 +14,10 @@ import { Charge } from "./dtos/entities/Charge";
 import { PartialCharge } from "./dtos/entities/PartialCharge";
 import { CreateChargeInput } from "./dtos/inputs/CreateChargeInput";
 import ChargeModel from "./models/ChargeModel";
-import {
-  PartialChargeDocument,
-  PartialChargeModel,
-} from "./models/PartialChargeModel";
+import { PartialChargeModel } from "./models/PartialChargeModel";
 import { randomUUID } from "crypto";
 import { FakeChargePaymentInput } from "./dtos/inputs/FakeChargePaymentInput";
 import { Decimal } from "decimal.js";
-import { formatChargeDocumentForChargeObjectType } from "./utils/formatChargeDocumentForChargeObjectType";
 
 @Resolver(() => Charge)
 export class ChargeResolver {
@@ -125,7 +121,7 @@ export class ChargeResolver {
   async newNotification(
     @Root() notificationPayload: { id: string },
     @Arg("chargeId") chargeId: string
-  ): Promise<Charge> {
+  ): Promise<Charge | null> {
     const charge = await ChargeModel.findById(chargeId);
 
     if (!charge) {

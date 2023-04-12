@@ -6,12 +6,13 @@ import { graphql, GraphQLSubscriptionConfig } from "relay-runtime";
 import type { ChargeSubscription as ChargeSubscriptionType } from "../../../__generated__/ChargeSubscription.graphql";
 import { useMemo, useState } from "react";
 import { initEnvironment } from "../../relay/RelayEnvironment";
+import { GetServerSidePropsContext } from "next";
+import { ChargeQuery } from "../../../__generated__/ChargeQuery.graphql";
 
 const GET_CHARGE = graphql`
   query ChargeQuery($chargeId: String!) {
     charge(id: $chargeId) {
       id
-      globalId
       status
       value
       partialCharge {
@@ -26,7 +27,6 @@ const CHARGE_SUBSCRIPTION = graphql`
   subscription ChargeSubscription($chargeId: String!) {
     newNotification(chargeId: $chargeId) {
       id
-      globalId
       status
       value
       partialCharge {
@@ -37,19 +37,38 @@ const CHARGE_SUBSCRIPTION = graphql`
   }
 `;
 
-export async function getServerSideProps(ctx: any) {
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   const chargeId = ctx.query.charge;
+
+  if (!chargeId) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
   const environment = initEnvironment(undefined);
-  const queryProps = await fetchQuery(
+  const queryProps = await fetchQuery<ChargeQuery>(
     environment,
     GET_CHARGE,
     {
-      chargeId,
+      chargeId: chargeId as string,
     },
     {
       fetchPolicy: "network-only",
     }
   ).toPromise();
+
+  if (!queryProps || !queryProps.charge) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
 
   const initialRecords = environment.getStore().getSource().toJSON();
 
