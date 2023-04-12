@@ -1,61 +1,53 @@
-import { gql, useMutation } from "@apollo/client";
-import { Box, Center, VStack, Text, Divider } from "@chakra-ui/react";
+import { Box, Center, VStack, Divider } from "@chakra-ui/react";
 import Image from "next/image";
 import SubmitButton from "../generic/form/SubmitButton";
 import Success from "../generic/svg/Success";
 import PageTitle from "../generic/text/PageTitle";
 import TextWithLabel from "../generic/text/TextWithLabel";
+import { graphql } from "relay-runtime";
+import { useFragment, useMutation } from "react-relay";
+import type { QrCodeChargeFragment$key } from "../../../__generated__/QrCodeChargeFragment.graphql";
 
-const FAKE_CHARGE_PAYMENT = gql`
-  mutation Mutation($data: FakeChargePaymentInput!) {
+const PARTIAL_CHARGE_FRAGMENT = graphql`
+  fragment QrCodeChargeFragment on PartialCharge {
+    id
+    value
+    status
+    transactionId
+    qrCode
+  }
+`;
+
+const PAY_CHARGE_MUTATION = graphql`
+  mutation QrCodeChargeMutation($data: FakeChargePaymentInput!) {
     fakeChargePayment(data: $data)
   }
 `;
 
 interface Props {
-  id: string;
-  value: number;
-  status: "pending" | "paid";
+  charge: QrCodeChargeFragment$key;
   paymentNumber: number;
-  qrCode: string;
   hasDivider?: boolean;
 }
 
 export default function QrCodeCharge({
-  id,
-  value,
-  status,
+  charge,
   paymentNumber,
-  qrCode,
   hasDivider,
 }: Props) {
-  const [createCharge, { loading }] = useMutation(FAKE_CHARGE_PAYMENT);
+  const { qrCode, status, transactionId, value } = useFragment(
+    PARTIAL_CHARGE_FRAGMENT,
+    charge
+  );
+  const [commitMutation, isMutationInFlight] = useMutation(PAY_CHARGE_MUTATION);
 
-  const onPayButtonClick = async () => {
-    await createCharge({
-      variables: {
-        data: {
-          transactionId: id,
-        },
-      },
-    });
-  };
-
-  const formattedCurrency = value.toLocaleString("pt-BR", {
+  const formattedValue = value / 100;
+  const formattedCurrency = formattedValue.toLocaleString("pt-BR", {
     currency: "BRL",
     style: "currency",
   });
 
-  const paymentTextIndexes = [
-    "primeira",
-    "segunda",
-    "terceira",
-    "quarta",
-    "quinta",
-    "sexta",
-    "sétima",
-    "oitava",
-  ];
+  const paymentTextIndexes = ["primeira", "segunda", "terceira", "quarta"];
 
   const textTitle =
     status === "pending"
@@ -65,6 +57,16 @@ export default function QrCodeCharge({
         ][0].toUpperCase()}${paymentTextIndexes[paymentNumber].substring(
           1
         )} parte do pagamento concluída.`;
+
+  const onPayButtonClick = () => {
+    commitMutation({
+      variables: {
+        data: {
+          transactionId,
+        },
+      },
+    });
+  };
 
   return (
     <Box>
@@ -97,8 +99,8 @@ export default function QrCodeCharge({
               fontSize="12px"
               height={8}
               width={150}
-              isDisabled={loading}
-              isLoading={loading}
+              isDisabled={isMutationInFlight}
+              isLoading={isMutationInFlight}
               borderRadius={0}
               onClick={onPayButtonClick}
             />
@@ -111,7 +113,7 @@ export default function QrCodeCharge({
         )}
         <TextWithLabel
           label="Identificador"
-          content={id}
+          content={transactionId}
           labelFontSize="20px"
           contentFontSize="16px"
           additionalStyles={{ paddingTop: 10 }}

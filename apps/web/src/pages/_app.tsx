@@ -2,19 +2,21 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { AppProps } from "next/app";
 import { customizedTheme } from "../theme";
 import Head from "next/head";
-import { ApolloProvider } from "@apollo/client";
-import { client } from "../config/graphql";
+import { ReactRelayContext } from "react-relay";
+import { useEnvironment } from "../relay/RelayEnvironment";
 
 function App({ Component, pageProps }: AppProps) {
+  const environment = useEnvironment(pageProps.initialRecords);
+
   return (
-    <ApolloProvider client={client}>
+    <ReactRelayContext.Provider value={{ environment }}>
       <ChakraProvider theme={customizedTheme}>
         <Head>
           <title>PixCollab - Woovi</title>
         </Head>
         <Component {...pageProps} />
       </ChakraProvider>
-    </ApolloProvider>
+    </ReactRelayContext.Provider>
   );
 }
 

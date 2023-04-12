@@ -7,30 +7,32 @@ import CurrencyInput from "../ui/specific/CurrencyInput";
 import SubmitButton from "../ui/generic/form/SubmitButton";
 import SelectInput from "../ui/generic/form/SelectInput";
 import Loading from "../ui/generic/form/Loading";
-import { gql, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
+import { graphql } from "relay-runtime";
+import { useMutation } from "react-relay";
+import type { pagesMutation } from "../../__generated__/pagesMutation.graphql";
+import { useState } from "react";
 import { formatCurrency } from "../utils/formatCurrency";
 
-type FormData = {
-  totalValue: string;
-  personsQuantity: string;
-};
-
-const CREATE_CHARGE = gql`
-  mutation CreateCharge($data: CreateChargeInput!) {
+const CREATE_CHARGE_MUTATION = graphql`
+  mutation pagesMutation($data: CreateChargeInput!) {
     createCharge(data: $data) {
       id
     }
   }
 `;
 
+type FormData = {
+  totalValue: string;
+  personsQuantity: string;
+};
+
 export default function Home() {
   const router = useRouter();
-  const [createCharge, { data, loading, error }] = useMutation(CREATE_CHARGE);
-
-  if (data) {
-    router.push(`/pay/${data.createCharge.id}`);
-  }
+  const [loading, setIsLoading] = useState(false);
+  const [commitMutation, isMutationInFlight] = useMutation<pagesMutation>(
+    CREATE_CHARGE_MUTATION
+  );
 
   const {
     register,
@@ -71,19 +73,21 @@ export default function Home() {
 
     const personsQuantityNumber = Number(personsQuantity);
 
-    await createCharge({
+    commitMutation({
       variables: {
         data: {
           value: totalValueNumber,
           collaboratorsQuantity: personsQuantityNumber,
         },
       },
+      onCompleted: (data) => {
+        setIsLoading(true);
+        router.push(`/pay/${data.createCharge.id}`);
+      },
     });
   };
 
-  if (loading || data) {
-    return <Loading />;
-  }
+  if (isMutationInFlight || loading) return <Loading />;
 
   return (
     <Layout>
