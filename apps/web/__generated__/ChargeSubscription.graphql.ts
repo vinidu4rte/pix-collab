@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f61d109b66ecc70c5b7571e7d265d4f5>>
+ * @generated SignedSource<<90aa46486138346f4b36445d88b49381>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,7 +15,6 @@ export type ChargeSubscription$variables = {
 };
 export type ChargeSubscription$data = {
   readonly newNotification: {
-    readonly globalId: string;
     readonly id: string;
     readonly partialCharge: ReadonlyArray<{
       readonly id: string;
@@ -56,17 +55,10 @@ v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "globalId",
-  "storageKey": null
-},
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
   "name": "status",
   "storageKey": null
 },
-v5 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -91,7 +83,6 @@ return {
           (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
-          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -133,7 +124,6 @@ return {
           (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
-          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -143,8 +133,8 @@ return {
             "plural": true,
             "selections": [
               (v2/*: any*/),
-              (v5/*: any*/),
               (v4/*: any*/),
+              (v3/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -168,16 +158,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "909e0117dedb30c361703ef7c364b87b",
+    "cacheID": "a1c700f34522a9ca05c2bfdafbaf5737",
     "id": null,
     "metadata": {},
     "name": "ChargeSubscription",
     "operationKind": "subscription",
-    "text": "subscription ChargeSubscription(\n  $chargeId: String!\n) {\n  newNotification(chargeId: $chargeId) {\n    id\n    globalId\n    status\n    value\n    partialCharge {\n      id\n      ...QrCodeChargeFragment\n    }\n  }\n}\n\nfragment QrCodeChargeFragment on PartialCharge {\n  id\n  value\n  status\n  transactionId\n  qrCode\n}\n"
+    "text": "subscription ChargeSubscription(\n  $chargeId: String!\n) {\n  newNotification(chargeId: $chargeId) {\n    id\n    status\n    value\n    partialCharge {\n      id\n      ...QrCodeChargeFragment\n    }\n  }\n}\n\nfragment QrCodeChargeFragment on PartialCharge {\n  id\n  value\n  status\n  transactionId\n  qrCode\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7eb0fc3800779d2b0e916e6620623296";
+(node as any).hash = "b44501fa4b95071449d726ef1c547253";
 
 export default node;

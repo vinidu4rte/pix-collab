@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<95ad8b611d32952f748a9b1b1b15c756>>
+ * @generated SignedSource<<eeb407fd4f4021bcd17cf13b9fbb4e1f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,7 +15,6 @@ export type ChargeQuery$variables = {
 };
 export type ChargeQuery$data = {
   readonly charge: {
-    readonly globalId: string;
     readonly id: string;
     readonly partialCharge: ReadonlyArray<{
       readonly id: string;
@@ -56,17 +55,10 @@ v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "globalId",
-  "storageKey": null
-},
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
   "name": "status",
   "storageKey": null
 },
-v5 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -91,7 +83,6 @@ return {
           (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
-          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -133,7 +124,6 @@ return {
           (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
-          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -143,8 +133,8 @@ return {
             "plural": true,
             "selections": [
               (v2/*: any*/),
-              (v5/*: any*/),
               (v4/*: any*/),
+              (v3/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -168,16 +158,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2255bc575eb83e3d4f2e22eeb8106466",
+    "cacheID": "a2a3d9c3e33ea9fc8d93c31977162ecf",
     "id": null,
     "metadata": {},
     "name": "ChargeQuery",
     "operationKind": "query",
-    "text": "query ChargeQuery(\n  $chargeId: String!\n) {\n  charge(id: $chargeId) {\n    id\n    globalId\n    status\n    value\n    partialCharge {\n      id\n      ...QrCodeChargeFragment\n    }\n  }\n}\n\nfragment QrCodeChargeFragment on PartialCharge {\n  id\n  value\n  status\n  transactionId\n  qrCode\n}\n"
+    "text": "query ChargeQuery(\n  $chargeId: String!\n) {\n  charge(id: $chargeId) {\n    id\n    status\n    value\n    partialCharge {\n      id\n      ...QrCodeChargeFragment\n    }\n  }\n}\n\nfragment QrCodeChargeFragment on PartialCharge {\n  id\n  value\n  status\n  transactionId\n  qrCode\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1995a615143f183e01e8461db36fa8cb";
+(node as any).hash = "3dad51a04916836facce814288e0c28a";
 
 export default node;
